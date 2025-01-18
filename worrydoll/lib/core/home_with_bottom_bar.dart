@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:worrydoll/WorryDoll/WorryDollHelloPage.dart';
+
+import 'colors.dart';
 //import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class HomeWithBottomBar extends StatefulWidget {
@@ -27,6 +29,9 @@ class _HomeWithBottomBarState extends State<HomeWithBottomBar> {
             _currentIndex = index;
           });
         },
+        backgroundColor: AppColors.blue, // 하단바 배경색
+        selectedItemColor: AppColors.pink,    // 선택된 아이템 색상
+        unselectedItemColor: Colors.black54, // 선택되지 않은 아이템 색상
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.cruelty_free),

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/colors.dart';
+
 class SelectDollPage extends StatefulWidget {
   @override
   _SelectDollPageState createState() => _SelectDollPageState();
@@ -166,7 +168,7 @@ class _SelectDollPageState extends State<SelectDollPage> {
                   }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.pinkAccent,
+                    backgroundColor: AppColors.pink,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
