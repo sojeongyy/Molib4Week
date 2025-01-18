@@ -5,3 +5,4 @@ pymysql  # MySQL 드라이버
 python-dotenv
 cryptography
 openai
+requests

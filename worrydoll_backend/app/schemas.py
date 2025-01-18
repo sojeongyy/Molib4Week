@@ -1,6 +1,7 @@
 # app/schemas.py
 from pydantic import BaseModel
 from datetime import datetime
+from typing import Optional
 
 class CreateWorry(BaseModel):
     content: str
@@ -8,6 +9,7 @@ class CreateWorry(BaseModel):
 class WorryResponse(BaseModel):
     id: int
     content: str
+    comfort_message: Optional[str]
     date_created: datetime
     is_resolved: bool
 

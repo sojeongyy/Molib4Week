@@ -9,6 +9,10 @@ class Worry(Base):
     __tablename__ = "worries"
 
     id = Column(Integer, primary_key=True, index=True)
-    content = Column(String(255), nullable=False)
+    content = Column(String(500), nullable=False)
+    comfort_message = Column(String(500), nullable=True)
     date_created = Column(DateTime, default=datetime.now(timezone.utc))
     is_resolved = Column(Boolean, default=False)
+    
+
+

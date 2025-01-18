@@ -33,3 +33,6 @@ Thumbs.db
 
 # 기타
 *.swp
+
+# 테스트 파일
+confirm_request.py
