@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'SelectDoll/SelectDollPage.dart';
-import 'SelectDoll/home_with_bottom_bar.dart';
+import 'core/home_with_bottom_bar.dart';
 
 
 

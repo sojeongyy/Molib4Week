@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:worrydoll/WorryDoll/WorryDollHelloPage.dart';
+//import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class HomeWithBottomBar extends StatefulWidget {
   @override
@@ -10,7 +12,7 @@ class _HomeWithBottomBarState extends State<HomeWithBottomBar> {
 
   // 예시 스크린
   final List<Widget> _screens = [
-    Center(child: Text('Home Screen')),
+    WorryDollHelloPage(),
     Center(child: Text('Business Screen')),
   ];
 
