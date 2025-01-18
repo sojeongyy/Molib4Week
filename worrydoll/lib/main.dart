@@ -1,24 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:worrydoll/SelectDoll/SelectDollPage.dart';
+import 'SelectDoll/SelectDollPage.dart';
+import 'core/colors.dart';
+import 'core/home_with_bottom_bar.dart';
+
+
 
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'WorryDoll',
       theme: ThemeData(
         fontFamily: 'ongle',
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        // colorScheme: ColorScheme.fromSeed(seedColor: ),
         useMaterial3: true,
+        primaryColor: AppColors.pink,  // 기본 색상 설정
+        //scaffoldBackgroundColor: AppColors.a,  // 배경색
+        textTheme: const TextTheme(
+        bodyLarge: TextStyle(color: Colors.black),
+        )
       ),
-      home: SelectDollPage(),
+      // 초기 라우트: SelectDollPage (하단바 없음)
+      initialRoute: '/',
+      routes: {
+        '/': (context) => SelectDollPage(),      // 인형 선택 페이지
+        '/home': (context) => HomeWithBottomBar() // 메인 페이지(하단바 있음)
+      },
     );
   }
 }
@@ -62,4 +73,3 @@ class MyApp extends StatelessWidget {
 //   );
 // }
 // }
-
