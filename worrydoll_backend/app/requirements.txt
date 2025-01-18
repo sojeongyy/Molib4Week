@@ -1,0 +1,7 @@
+fastapi
+uvicorn[standard]
+sqlalchemy
+pymysql  # MySQL 드라이버
+python-dotenv
+cryptography
+openai
