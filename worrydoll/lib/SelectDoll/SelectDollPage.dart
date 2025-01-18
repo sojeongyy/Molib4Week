@@ -16,13 +16,7 @@ class _SelectDollPageState extends State<SelectDollPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // Scaffold를 사용하면 기본적인 화면 구조(앱바, 바텀네비게이션 등)에 맞춰 UI를 구성할 수 있습니다.
-      body: SafeArea(
-        // SafeArea는 노치나 상단바와 겹치지 않도록 여백을 확보해 줍니다.
-        child: SingleChildScrollView(
-          // 화면 공간을 벗어나면 스크롤할 수 있도록 해줍니다.
-          child: Container(
+    return Container(
             decoration: BoxDecoration(
               image: DecorationImage(
                 image: AssetImage('assets/images/wood_background.jpg'),
@@ -158,7 +152,12 @@ class _SelectDollPageState extends State<SelectDollPage> {
                         Text('${_selectedDollName} 인형을 선택했습니다!'),
                         actions: [
                           TextButton(
-                            onPressed: () => Navigator.of(context).pop(),
+                            onPressed: () {
+                              Navigator.of(context).pop();
+
+                              Navigator.of(context)
+                                  .pushReplacementNamed('/home');
+                            },
                             child: Text('확인'),
                           ),
                         ],
@@ -184,9 +183,6 @@ class _SelectDollPageState extends State<SelectDollPage> {
                 SizedBox(height: 20),
               ],
             ),
-          ),
-        ),
-      ),
     );
   }
 }
