@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
 import 'SelectDoll/SelectDollPage.dart';
 import 'core/colors.dart';
 import 'core/home_with_bottom_bar.dart';
 
 
 
-void main() {
+void main() async {
+  await initializeDateFormatting();
   runApp(MyApp());
 }
 

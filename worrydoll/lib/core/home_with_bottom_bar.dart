@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:worrydoll/DiaryCover/DiaryCoverPage.dart';
+import 'package:worrydoll/DiaryCover/DiaryPageView.dart';
 import 'package:worrydoll/WorryDoll/WorryDollHelloPage.dart';
 
 import 'colors.dart';
@@ -16,7 +17,7 @@ class _HomeWithBottomBarState extends State<HomeWithBottomBar> {
   // 예시 스크린
   final List<Widget> _screens = [
     WorryDollHelloPage(),
-    DiaryCoverPage(),
+    DiaryPageView(),
   ];
 
   @override
