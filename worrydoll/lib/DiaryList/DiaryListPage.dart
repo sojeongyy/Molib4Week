@@ -78,6 +78,9 @@ class _DiaryListPageState extends State<DiaryListPage> {
                       MaterialPageRoute(
                         builder: (context) => DiaryDetailPage(
                           dateTime: entryTime,
+                          content: entry['content'],
+                          comfortMessage: entry['comfort_message'] ?? '',
+                          title: entry['title'],
                         ),
                       ),
                     );
@@ -85,7 +88,7 @@ class _DiaryListPageState extends State<DiaryListPage> {
                   child: DiaryListComponent(
                     time:
                     '${entryTime.hour > 12 ? "오후" : "오전"} ${entryTime.hour % 12}:${entryTime.minute.toString().padLeft(2, '0')}',
-                    content: entry['content'],
+                    title: entry['title'],
                   ),
                 );
               }).toList(),

@@ -4,12 +4,12 @@ import '../../core/colors.dart';
 
 class DiaryListComponent extends StatelessWidget {
   final String time;
-  final String content;
+  final String title;
 
   const DiaryListComponent({
     Key? key,
     required this.time,
-    required this.content,
+    required this.title,
   }) : super(key: key);
 
   @override
@@ -45,7 +45,7 @@ class DiaryListComponent extends StatelessWidget {
           const SizedBox(width: 32.0),
           Expanded(
             child: Text(
-              content,
+              title,
               style: const TextStyle(
                 fontSize: 16.0,
                 fontFamily: 'baby',
