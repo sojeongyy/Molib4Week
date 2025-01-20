@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
 
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'ResponsePage.dart';
 
 
 class MyWorryPage extends StatefulWidget {
@@ -20,7 +22,7 @@ class _MyWorryPageState extends State<MyWorryPage>
   // stt
   late stt.SpeechToText _speech;
   bool _isListening = false;
-  String _text = '';
+  String _recognizedText = '';
 
 
   @override
@@ -68,7 +70,7 @@ class _MyWorryPageState extends State<MyWorryPage>
         },
         localeId: 'ko_KR',
         listenMode: stt.ListenMode.dictation,
-        interimResults: true,
+        partialResults: true,
       );
     } else {
       print("STT 초기화 실패");
@@ -81,29 +83,6 @@ class _MyWorryPageState extends State<MyWorryPage>
       setState(() {
         _isListening = false;
       });
-    }
-  }
-
-  Future<void> _sendToServer() async {
-    if(_recognizedText.isEmpty) {
-      print("음성 인식 결과가 없습니다.");
-      return;
-    }
-
-    final url = Uri.parse('http://localhost:8000/api/worries/');
-    try {
-      final response = await http.post(
-        url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'text': _recognizedText}),
-      );
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        print("서버 응답: ${response.body}");
-      } else {
-        print("전송 실패: ${response.statusCode}");
-      }
-    } catch (e) {
-      print("서버 전송 중 오류 발생: $e");
     }
   }
 
@@ -177,8 +156,15 @@ class _MyWorryPageState extends State<MyWorryPage>
                   text: '걱정 전달하기',
                   onPressed: () async {
                     print('걱정 전달하기 버튼 클릭됨');
+                    print(_recognizedText);
                     _stopListening();
-                    await _sendToServer();
+                    // ResponsePage로 recognizedText를 전달
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ResponsePage(content: _recognizedText),
+                      ),
+                    );
                   },
                 ),
               ),
