@@ -64,8 +64,8 @@ class _MyWorryPageState extends State<MyWorryPage>
                   );
                 },
                 child: Image.asset(
-                  'assets/images/dolls/rabbit_shadow.png',
-                  width: 200,
+                  'assets/images/dolls/rabbit.png',
+                  width: 170,
                   fit: BoxFit.contain,
                 ),
               ),

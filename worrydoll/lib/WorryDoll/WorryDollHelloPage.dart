@@ -78,8 +78,8 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
                 );
               },
               child: Image.asset(
-                'assets/images/dolls/rabbit_shadow.png',
-                width: 200,
+                'assets/images/dolls/rabbit.png',
+                width: 170,
                 fit: BoxFit.contain,
               ),
             ),
