@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
+import '../DiaryList/DiaryListPage.dart';
 import '../core/colors.dart';
 
 class DiaryCalendarPage extends StatefulWidget {
@@ -78,7 +79,22 @@ class _DiaryCalendarPageState extends State<DiaryCalendarPage> {
               child: ElevatedButton(
                 onPressed: () {
                   // 선택된 날짜로 특정 동작 수행
-                  print('선택한 날짜: $_selectedDay');
+                  if (_selectedDay != null) {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            DiaryListPage(selectedDate: _selectedDay!),
+                      ),
+                    );
+                  } else {
+                    // 선택되지 않은 경우 알림
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(
+                        content: Text('날짜를 선택해주세요!'),
+                      ),
+                    );
+                  }
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.pink,
