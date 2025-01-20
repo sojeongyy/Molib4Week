@@ -1,10 +1,12 @@
+# app/database.py
 import os
 import time
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy.exc import OperationalError
 
-DATABASE_URL = os.getenv("DATABASE_URL", "mysql+pymysql://myuser:1234@mysql:3306/worrydoll-db")
+
+DATABASE_URL = os.getenv("DATABASE_URL")
 
 # MySQL 연결 대기 로직
 connected = False
