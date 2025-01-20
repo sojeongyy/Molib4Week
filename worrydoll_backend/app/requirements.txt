@@ -1,7 +1,7 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-pymysql  # MySQL 드라이버
+pymysql  
 python-dotenv
 cryptography
 openai
