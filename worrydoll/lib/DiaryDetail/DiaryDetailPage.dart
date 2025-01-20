@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import '../core/DollProvider.dart';
 import '../core/colors.dart';
 
 class DiaryDetailPage extends StatefulWidget {
@@ -49,6 +51,10 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
 
   @override
   Widget build(BuildContext context) {
+
+    final selectedDollName =
+        Provider.of<DollProvider>(context).selectedDollName ?? "걱정인형"; // 선택되지 않았을 경우 기본 이미지
+    
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
@@ -188,11 +194,11 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
                 ),
               ),
               const SizedBox(height: 10),
-              const Align(
+              Align(
                 alignment: Alignment.bottomRight,
                 child: Text(
-                  '- 토순이',
-                  style: TextStyle(
+                  '- ' + selectedDollName,
+                  style: const TextStyle(
                     fontSize: 20,
                   ),
                 ),

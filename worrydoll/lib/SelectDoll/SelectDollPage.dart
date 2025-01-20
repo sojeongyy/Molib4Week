@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:worrydoll/SelectDoll/widgets/confirm_doll_dialog.dart';
 
+import '../core/DollProvider.dart';
 import '../core/colors.dart';
 
 class SelectDollPage extends StatefulWidget {
@@ -10,11 +13,31 @@ class SelectDollPage extends StatefulWidget {
 class _SelectDollPageState extends State<SelectDollPage> {
   String? _selectedDollName; // 어느 인형이 선택되었는지 저장
 
-  void _onDollSelected(BuildContext context, String dollName) {
+  void _onDollSelected(BuildContext context, String dollName, String imagePath) {
     setState(() {
       _selectedDollName = dollName;
     });
+    Provider.of<DollProvider>(context, listen: false).selectDoll(dollName, imagePath);
   }
+  void _showConfirmationPopup(BuildContext context) {
+    if (_selectedDollName == null) return;
+
+    final dollImagePath = Provider.of<DollProvider>(context, listen: false).selectedDollImagePath;
+
+    showDialog(
+      context: context,
+      builder: (context) {
+        return ConfirmDollDialog(
+          dollName: _selectedDollName!,
+          dollImagePath: dollImagePath ?? 'assets/images/dolls/default.png',
+          onConfirm: () {
+            Navigator.of(context).pushReplacementNamed('/home');
+          },
+        );
+      },
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -61,13 +84,13 @@ class _SelectDollPageState extends State<SelectDollPage> {
                       children: [
                         DollImage(
                           imagePath: 'assets/images/dolls/bear.png',
-                          onTap: () => _onDollSelected(context, '곰돌'),
+                          onTap: () => _onDollSelected(context, '곰돌', 'assets/images/dolls/bear.png'),
                           isSelected: _selectedDollName == '곰돌',
                         ),
                         SizedBox(width: 50),
                         DollImage(
                           imagePath: 'assets/images/dolls/frog.png',
-                          onTap: () => _onDollSelected(context, '개굴'),
+                          onTap: () => _onDollSelected(context, '개굴', 'assets/images/dolls/frog.png'),
                           isSelected: _selectedDollName == '개굴',
                         ),
                       ],
@@ -94,13 +117,13 @@ class _SelectDollPageState extends State<SelectDollPage> {
                       children: [
                         DollImage(
                           imagePath: 'assets/images/dolls/giraffe.png',
-                          onTap: () => _onDollSelected(context, '기리니'),
-                          isSelected: _selectedDollName == '기리니',
+                          onTap: () => _onDollSelected(context, '길인', 'assets/images/dolls/giraffe.png'),
+                          isSelected: _selectedDollName == '길인',
                         ),
                         SizedBox(width: 50),
                         DollImage(
                           imagePath: 'assets/images/dolls/rabbit.png',
-                          onTap: () => _onDollSelected(context, '토순'),
+                          onTap: () => _onDollSelected(context, '토순', 'assets/images/dolls/rabbit.png'),
                           isSelected: _selectedDollName == '토순',
                         ),
                       ],
@@ -127,14 +150,14 @@ class _SelectDollPageState extends State<SelectDollPage> {
                       children: [
                         DollImage(
                           imagePath: 'assets/images/dolls/lion.png',
-                          onTap: () => _onDollSelected(context, '어흥'),
+                          onTap: () => _onDollSelected(context, '어흥', 'assets/images/dolls/lion.png'),
                           isSelected: _selectedDollName == '어흥',
                         ),
                         SizedBox(width: 50),
                         DollImage(
                           imagePath: 'assets/images/dolls/slow.png',
-                          onTap: () => _onDollSelected(context, '림보'),
-                          isSelected: _selectedDollName == '림보',
+                          onTap: () => _onDollSelected(context, '늘봉', 'assets/images/dolls/slow.png'),
+                          isSelected: _selectedDollName == '늘봉',
                         ),
                       ],
                     ),
@@ -145,36 +168,16 @@ class _SelectDollPageState extends State<SelectDollPage> {
                 SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _selectedDollName != null
-                      ? () {
-                    showDialog(
-                      context: context,
-                      builder: (context) => AlertDialog(
-                        title: Text('결정'),
-                        content:
-                        Text('${_selectedDollName} 인형을 선택했습니다!'),
-                        actions: [
-                          TextButton(
-                            onPressed: () {
-                              Navigator.of(context).pop();
-
-                              Navigator.of(context)
-                                  .pushReplacementNamed('/home');
-                            },
-                            child: Text('확인'),
-                          ),
-                        ],
-                      ),
-                    );
-                  }
+                      ? () => _showConfirmationPopup(context)
                       : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: AppColors.pink,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 40, vertical: 15),
+                    padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
                   ),
-                  child: Text(
+                  child: const Text(
                     '결정',
                     style: TextStyle(
                       fontSize: 18,
@@ -182,7 +185,7 @@ class _SelectDollPageState extends State<SelectDollPage> {
                     ),
                   ),
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
               ],
             ),
     );

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
+
+import '../core/DollProvider.dart';
 
 
 class MyWorryPage extends StatefulWidget {
@@ -36,6 +39,11 @@ class _MyWorryPageState extends State<MyWorryPage>
   }
   @override
   Widget build(BuildContext context) {
+
+    final selectedDollImagePath =
+        Provider.of<DollProvider>(context).selectedDollImagePath ??
+            'assets/images/dolls/default.png'; // 선택되지 않았을 경우 기본 이미지
+
     return Scaffold(
       body: Stack(
         children: [
@@ -64,7 +72,7 @@ class _MyWorryPageState extends State<MyWorryPage>
                   );
                 },
                 child: Image.asset(
-                  'assets/images/dolls/rabbit.png',
+                  selectedDollImagePath,
                   width: 170,
                   fit: BoxFit.contain,
                 ),

@@ -1,36 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
-class DiaryCoverPage extends StatefulWidget {
-  @override
-  _DiaryCoverPageState createState() => _DiaryCoverPageState();
-}
-
-class _DiaryCoverPageState extends State<DiaryCoverPage>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  // late Animation<double> _animation1;
-  // late Animation<double> _animation2;
-  // late Animation<double> _animation3;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // AnimationController 초기화
-    _controller = AnimationController(
-      duration: const Duration(seconds: 20), // 짧은 애니메이션 지속 시간
-      vsync: this,
-    )..repeat(reverse: true); // 애니메이션 반복
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
+class DiaryCoverPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -45,17 +15,9 @@ class _DiaryCoverPageState extends State<DiaryCoverPage>
           ),
 
           // 손그림 이미지 1 - 무지개
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              final random = Random();
-              final offset = random.nextBool() ? 20.0 : -20.0; // 순간이동 느낌
-              return Positioned(
-                left: 90 + offset,
-                top: 50,
-                child: child!,
-              );
-            },
+          Positioned(
+            left: 90,
+            top: 50,
             child: Image.asset(
               'assets/images/diary/rainbow.png',
               width: 100,
@@ -63,53 +25,29 @@ class _DiaryCoverPageState extends State<DiaryCoverPage>
           ),
 
           // 손그림 이미지 2 - 악보
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              final random = Random();
-              final offset = random.nextBool() ? 15.0 : -15.0; // 순간이동 느낌
-              return Positioned(
-                right: 90 + offset,
-                top: 100,
-                child: child!,
-              );
-            },
+          Positioned(
+            right: 60,
+            top: 100,
             child: Image.asset(
               'assets/images/diary/music_note.png',
               width: 80,
             ),
           ),
 
-
           // 손그림 이미지 3 - 물방울
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              final random = Random();
-              final offset = random.nextBool() ? 10.0 : -10.0; // 순간이동 느낌
-              return Positioned(
-                left: 70 + offset,
-                bottom: 80,
-                child: child!,
-              );
-            },
+          Positioned(
+            left: 70,
+            bottom: 80,
             child: Image.asset(
               'assets/images/diary/raindrop.png',
               width: 90,
             ),
           ),
 
-          AnimatedBuilder(
-            animation: _controller,
-            builder: (context, child) {
-              final random = Random();
-              final offset = random.nextBool() ? 10.0 : -10.0; // 순간이동 느낌
-              return Positioned(
-                right: 70 + offset,
-                bottom: 100,
-                child: child!,
-              );
-            },
+          // 손그림 이미지 4 - 연필
+          Positioned(
+            right: 60,
+            bottom: 100,
             child: Image.asset(
               'assets/images/diary/pencil.png',
               width: 90,
@@ -127,7 +65,6 @@ class _DiaryCoverPageState extends State<DiaryCoverPage>
                   '2025',
                   style: TextStyle(
                     fontSize: 40,
-                    //fontWeight: FontWeight.bold,
                     fontFamily: 'baby',
                   ),
                 ),
@@ -136,7 +73,6 @@ class _DiaryCoverPageState extends State<DiaryCoverPage>
                   '걱정일기',
                   style: TextStyle(
                     fontSize: 40,
-                    //fontWeight: FontWeight.w400,
                     fontFamily: 'baby',
                   ),
                 ),

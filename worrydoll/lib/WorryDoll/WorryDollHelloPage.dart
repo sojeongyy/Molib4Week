@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
 
+import '../core/DollProvider.dart';
 import 'MyWorryPage.dart';
 
 class WorryDollHelloPage extends StatefulWidget {
@@ -14,7 +16,6 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
   late AnimationController _controller;
   late Animation<double> _animation;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  int _currentIndex = 0;
 
   @override
   void initState() {
@@ -51,6 +52,16 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
   }
 
   Widget _buildHelloPage(BuildContext context) {
+
+    // 선택된 인형 이미지 경로 가져오기
+    final selectedDollImagePath =
+        Provider.of<DollProvider>(context).selectedDollImagePath ??
+            'assets/images/dolls/default.png'; // 선택되지 않았을 경우 기본 이미지
+
+    final selectedDollName =
+        Provider.of<DollProvider>(context).selectedDollName ?? "걱정인형"; // 선택되지 않았을 경우 기본 이미지
+
+
     return Stack(
       children: [
         // 전체 배경
@@ -78,7 +89,7 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
                 );
               },
               child: Image.asset(
-                'assets/images/dolls/rabbit.png',
+                selectedDollImagePath,
                 width: 170,
                 fit: BoxFit.contain,
               ),
@@ -97,7 +108,7 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
               width: 305,
               height: 150,
               child: BalloonCard(
-                content: '안녕! 나는 너만의 걱정인형이야.\n'
+                content: '안녕! 나는 너만의 걱정인형 ' + selectedDollName + '이야.\n'
                     '오늘도 행복한 하루 보내~\n'
                     '걱정이 있으면 나한테 털어놔봐!',
               ),
