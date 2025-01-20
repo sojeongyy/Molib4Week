@@ -81,6 +81,7 @@ flutter:
    - assets/images/diary/pencil.png
    - assets/images/diary/rainbow.png
    - assets/images/diary/raindrop.png
+   - assets/json/diary_dummy_data.json
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

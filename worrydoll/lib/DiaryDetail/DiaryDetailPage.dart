@@ -9,6 +9,12 @@ class DiaryDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+    // TextEditingController 및 FocusNode 리스트 생성
+    final List<TextEditingController> controllers =
+    List.generate(4, (_) => TextEditingController());
+    final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+
     return Scaffold(
       body: SingleChildScrollView(
       child: Container(
@@ -36,19 +42,29 @@ class DiaryDetailPage extends StatelessWidget {
             ),
             const Divider(thickness: 1, color: Color(0xFFBFBBAC)),
             // 일기 내용 작성 (줄글 스타일)
+            // 일기 내용 작성 (줄글 스타일)
             Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  for (int i = 0; i < 4; i++) ...[
-                    TextField(
-                      decoration: const InputDecoration(
-                        // hintText: '내용을 입력하세요.',
-                        border: InputBorder.none,
-                        isDense: true,
-                      ),
-                      style: const TextStyle(fontSize: 16, height: 1.5),
-                      maxLines: 1, // 한 줄 입력
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (int i = 0; i < 4; i++) ...[
+                  TextField(
+                    controller: controllers[i],
+                    focusNode: focusNodes[i],
+                    decoration: const InputDecoration(
+                      // hintText: '내용을 입력하세요.',
+                      border: InputBorder.none,
+                      isDense: true,
                     ),
+                    style: const TextStyle(fontSize: 16, height: 1.5, fontFamily: 'baby'),
+                    maxLines: 1, // 한 줄 입력
+                    onChanged: (value) {
+                      // 글자 수가 27자를 넘으면 다음 TextField로 포커스 이동
+                      if (value.length > 27 && i < focusNodes.length - 1) {
+                        FocusScope.of(context)
+                            .requestFocus(focusNodes[i + 1]);
+                      }
+                    },
+                  ),
                     if (i != 4)
                       const Divider(
                         thickness: 1,
@@ -95,7 +111,6 @@ class DiaryDetailPage extends StatelessWidget {
                 '- 토순이가',
                 style: TextStyle(
                   fontSize: 20,
-                  fontWeight: FontWeight.bold,
                 ),
               ),
             ),
