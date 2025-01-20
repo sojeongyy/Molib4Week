@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
 
@@ -20,7 +21,7 @@ class _MyWorryPageState extends State<MyWorryPage>
   // stt
   late stt.SpeechToText _speech;
   bool _isListening = false;
-  String _text = '';
+  String _recognizedText = '';
 
 
   @override
@@ -51,6 +52,7 @@ class _MyWorryPageState extends State<MyWorryPage>
   }
   // stt function
   Future<void> _startListening() async {
+    if (_isListening) return;
     bool available = await _speech.initialize(
       onError: (error) => print("STT Error: $error"),
       onStatus: (status) => print("STT Status: $status"),
@@ -68,7 +70,7 @@ class _MyWorryPageState extends State<MyWorryPage>
         },
         localeId: 'ko_KR',
         listenMode: stt.ListenMode.dictation,
-        interimResults: true,
+        partialResults: true,
       );
     } else {
       print("STT 초기화 실패");
@@ -90,7 +92,13 @@ class _MyWorryPageState extends State<MyWorryPage>
       return;
     }
 
-    final url = Uri.parse('http://localhost:8000/api/worries/');
+    final apiUrl = dotenv.env['API_URL'];
+    if (apiUrl == null || apiUrl.isEmpty) {
+      print("API URL이 설정되지 않았습니다.");
+      return;
+    }
+
+    final url = Uri.parse(apiUrl);
     try {
       final response = await http.post(
         url,

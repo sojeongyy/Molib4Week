@@ -18,19 +18,6 @@ services:
     command: >
       uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
-  mysql:
-    image: mysql:latest
-    container_name: mysql-container
-    ports:
-      - "3306:3306"  # MySQL 포트 매핑
-    environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
-      MYSQL_DATABASE: ${MYSQL_DATABASE}
-      MYSQL_USER: ${MYSQL_USER}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
-    volumes:
-      - data:/var/lib/mysql  # 데이터 영구 저장
-
 volumes:
   data:
     driver: local
