@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/MyWorryPage.dart';
 import 'package:worrydoll/WorryDoll/WorryDollHelloPage.dart';
+import 'package:worrydoll/WorryDoll/widgets/BalloonDisplay.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
 
@@ -132,15 +133,10 @@ class _WorryingPageState extends State<WorryingPage>
           ),
 
           // 풍선 이미지
-          Positioned(
-            top: 120,
-            right: 70,
-            child: Image.asset(
-              'assets/images/balloons/red_balloon.png',
-              //width: 50,
-              height: 170,
-              fit: BoxFit.contain,
-            ),
+          BalloonDisplay(
+            balloonSize: 150, // 풍선 크기 조정
+            // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
+            // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
           ),
 
           // 말풍선

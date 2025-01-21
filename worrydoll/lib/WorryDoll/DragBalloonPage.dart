@@ -47,6 +47,18 @@ class _DragBalloonPageState extends State<DragBalloonPage>
     final selectedDollName =
         Provider.of<DollProvider>(context).selectedDollName ?? "걱정인형"; // 선택되지 않았을 경우 기본 이미지
 
+    final balloonCount = Provider.of<DollProvider>(context).balloonCount;
+
+    // 풍선 이미지 경로 결정
+    String balloonImagePath;
+    if (balloonCount == 0) {
+      balloonImagePath = 'assets/images/balloons/red_balloon.png';
+    } else if (balloonCount == 1) {
+      balloonImagePath = 'assets/images/balloons/yellow_balloon.png';
+    } else {
+      balloonImagePath = 'assets/images/balloons/yellow_balloon.png';
+    }
+
     return Scaffold(
       body: Stack(
         children: [
@@ -68,6 +80,7 @@ class _DragBalloonPageState extends State<DragBalloonPage>
                   setState(() {
                     _isDropped = true;
                   });
+                  Provider.of<DollProvider>(context, listen: false).addBalloon();
                   // 다음 화면으로 이동
                   Future.delayed(const Duration(milliseconds: 300), () {
                     Navigator.push(
@@ -93,14 +106,7 @@ class _DragBalloonPageState extends State<DragBalloonPage>
                               height: 170,
                               fit: BoxFit.contain,
                             ),
-                            // if (_isDropped)
-                            //   const Text(
-                            //     '감사합니다!',
-                            //     style: TextStyle(
-                            //       fontSize: 18,
-                            //       fontWeight: FontWeight.bold,
-                            //     ),
-                            //   ),
+
                           ],
                         ),
                       );
@@ -119,21 +125,21 @@ class _DragBalloonPageState extends State<DragBalloonPage>
               feedback: Material( // 드래그 중 풍선 이미지
                 color: Colors.transparent,
                 child: Image.asset(
-                  'assets/images/balloons/red_balloon.png',
+                    balloonImagePath,
                   height: 200,
                   fit: BoxFit.contain,
                 ),
               ),
-              childWhenDragging: Opacity(
-                opacity: 0.5,
-                child: Image.asset(
-                  'assets/images/balloons/red_balloon.png',
-                  height: 150,
-                  fit: BoxFit.contain,
-                ),
-              ),
-              child: Image.asset(
-                'assets/images/balloons/red_balloon.png',
+              // childWhenDragging: Opacity(
+              //   opacity: 0.5,
+              //   child: Image.asset(
+              //     balloonImagePath,
+              //     height: 150,
+              //     fit: BoxFit.contain,
+              //   ),
+              // ),
+              child: Image.asset( // 드래그 전 풍선 이미지
+                balloonImagePath,
                 height: 150,
                 fit: BoxFit.contain,
               ),
@@ -156,20 +162,6 @@ class _DragBalloonPageState extends State<DragBalloonPage>
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class NextScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: Text(
-          '다음 화면으로 이동했습니다!',
-          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-        ),
       ),
     );
   }

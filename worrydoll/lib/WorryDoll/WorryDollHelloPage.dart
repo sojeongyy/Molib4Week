@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:worrydoll/WorryDoll/widgets/BalloonDisplay.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
 
@@ -72,6 +73,7 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
           ),
         ),
 
+
         // 토끼 인형 이미지(절대 위치, 고정 크기)
         Positioned(
           top: 100,
@@ -114,6 +116,12 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
               ),
             ),
           ),
+        ),
+
+        BalloonDisplay(
+          balloonSize: 150, // 풍선 크기 조정
+          // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
+          // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
         ),
 
         // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
