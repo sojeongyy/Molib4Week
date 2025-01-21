@@ -15,8 +15,8 @@ class BalloonDisplay extends StatelessWidget {
   const BalloonDisplay({
     Key? key,
     this.balloonSize = 170,
-    this.redBalloonOffset = const Offset(80, 130),
-    this.yellowBalloonOffset = const Offset(80, 130),
+    this.redBalloonOffset = const Offset(70, 130),
+    this.yellowBalloonOffset = const Offset(70, 130),
   }) : super(key: key);
 
   @override
