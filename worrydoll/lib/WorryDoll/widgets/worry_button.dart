@@ -42,7 +42,7 @@ class WorryButton extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: TextStyle(fontSize: fontSize, color: Colors.black),
+        style: TextStyle(fontSize: fontSize, color: Colors.white),
       ),
     );
   }

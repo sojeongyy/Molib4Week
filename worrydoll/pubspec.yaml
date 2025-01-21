@@ -76,7 +76,15 @@ flutter:
     - assets/images/diary/pencil.png
     - assets/images/diary/rainbow.png
     - assets/images/diary/raindrop.png
+
+    - assets/images/balloons/blue_balloon.png
+    - assets/images/balloons/red_balloon.png
+    - assets/images/balloons/yellow_balloon.png
+
     - assets/json/diary_dummy_data.json
+
+
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

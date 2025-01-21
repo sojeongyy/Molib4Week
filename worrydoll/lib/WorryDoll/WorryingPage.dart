@@ -8,16 +8,16 @@ import '../core/colors.dart';
 import 'DragBalloonPage.dart';
 
 
-class MyWorryPage extends StatefulWidget {
-   // Navigator 키 추가
+class WorryingPage extends StatefulWidget {
+  // Navigator 키 추가
 
   //const MyWorryPage({Key? key}) : super(key: key);
 
   @override
-  _MyWorryPageState createState() => _MyWorryPageState();
+  _WorryingPageState createState() => _WorryingPageState();
 }
 
-class _MyWorryPageState extends State<MyWorryPage>
+class _WorryingPageState extends State<WorryingPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
@@ -108,8 +108,8 @@ class _MyWorryPageState extends State<MyWorryPage>
                 width: 305,
                 height: 150,
                 child: BalloonCard(
-                  content: '사실 요즘 일이 잘 안 풀리는 것 같아서 좀 답답해. \n'
-                            '어떻게 해야 할지 모르겠어.'
+                    content: '사실 요즘 일이 잘 안 풀리는 것 같아서 좀 답답해. \n'
+                        '어떻게 해야 할지 모르겠어.'
                 ),
               ),
             ),

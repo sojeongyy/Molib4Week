@@ -1,4 +1,7 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 import '../DiaryList/DiaryListPage.dart';
@@ -12,6 +15,30 @@ class DiaryCalendarPage extends StatefulWidget {
 class _DiaryCalendarPageState extends State<DiaryCalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  Set<DateTime> _diaryDates = {}; // 일기가 있는 날짜 저장
+
+  @override
+  void initState() {
+    super.initState();
+    _loadDiaryDates(); // JSON 파일에서 날짜 로드
+  }
+
+  Future<void> _loadDiaryDates() async {
+    // JSON 파일 로드
+    final String jsonString =
+    await rootBundle.loadString('assets/json/diary_dummy_data.json');
+    final List<dynamic> jsonData = json.decode(jsonString);
+
+    // 날짜 추출 및 중복 제거
+    final dates = jsonData.map((entry) {
+      final date = DateTime.parse(entry['date_created']);
+      return DateTime(date.year, date.month, date.day); // 시간 제거
+    }).toSet();
+
+    setState(() {
+      _diaryDates = dates;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,6 +96,41 @@ class _DiaryCalendarPageState extends State<DiaryCalendarPage> {
                 titleCentered: true,
                 titleTextStyle:
                 TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              // 일기가 있는 날짜 표시
+              calendarBuilders: CalendarBuilders(
+                defaultBuilder: (context, date, focusedDay) {
+                  if (_diaryDates.contains(
+                      DateTime(date.year, date.month, date.day))) {
+                    return Center(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Icon(
+                            Icons.cruelty_free, // 토끼 아이콘
+                            color: AppColors.pink.withOpacity(0.6), // 아이콘 색상 (투명도 추가 가능)
+                            size: 30, // 아이콘 크기
+                          ),
+                          Text(
+                            '${date.day}', // 날짜 숫자
+                            style: const TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
+                  return Center(
+                    child: Text(
+                      '${date.day}', // 기본 숫자
+                      style: const TextStyle(
+                        color: Colors.black,
+                      ),
+                    ),
+                  );
+                },
               ),
             ),
           ),
