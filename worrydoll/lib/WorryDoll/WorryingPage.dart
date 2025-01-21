@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:worrydoll/WorryDoll/MyWorryPage.dart';
+import 'package:worrydoll/WorryDoll/WorryDollHelloPage.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
 
@@ -57,7 +59,7 @@ class _WorryingPageState extends State<WorryingPage>
     _displayedWords = [];
     _currentWordIndex = 0;
 
-    _timer = Timer.periodic(Duration(milliseconds: 300), (timer) {
+    _timer = Timer.periodic(Duration(milliseconds: 300), (timer) { // 이걸로 속도 조정 가능!
       if (_currentWordIndex < words.length) {
         setState(() {
           _displayedWords.add(words[_currentWordIndex]);
@@ -65,9 +67,11 @@ class _WorryingPageState extends State<WorryingPage>
         });
       } else {
         timer.cancel(); // 모든 단어가 표시되면 타이머 중지
-        if (!_showFirstMessage) {
-          // 버튼 활성화
-          setState(() {});
+        if (_showFirstMessage) {
+          // 첫 번째 메시지가 끝난 후 두 번째 메시지로 전환
+          Future.delayed(Duration(milliseconds: 500), () {
+            _switchToSecondMessage();
+          });
         }
       }
     });
@@ -104,9 +108,9 @@ class _WorryingPageState extends State<WorryingPage>
 
           // 토끼 인형 이미지(절대 위치, 고정 크기)
           Positioned(
-            top: 100,
+            top: 130,
             left: 0,
-            right: 0,   // left와 right를 모두 0으로 두고
+            right: 0,
             child: Align(
               alignment: Alignment.topCenter, // 수평 중앙
               child: AnimatedBuilder(
@@ -124,6 +128,18 @@ class _WorryingPageState extends State<WorryingPage>
                   fit: BoxFit.contain,
                 ),
               ),
+            ),
+          ),
+
+          // 풍선 이미지
+          Positioned(
+            top: 120,
+            right: 70,
+            child: Image.asset(
+              'assets/images/balloons/red_balloon.png',
+              //width: 50,
+              height: 170,
+              fit: BoxFit.contain,
             ),
           ),
 
@@ -146,18 +162,39 @@ class _WorryingPageState extends State<WorryingPage>
             right: 0,
             child: Align(
               alignment: Alignment.topCenter,
-              child: SizedBox(
-                width: 305,
-                height: 50,
-                child: WorryButton(
-                  text: '다른 걱정 털어놓기',
-                  onPressed: () {
-                    // Navigator를 사용해 MyWorryPage로 이동
-                    _navigatorKey.currentState!.push(
-                      MaterialPageRoute(builder: (context) => DragBalloonPage()),
-                    );
-                  },
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 버튼 간격 균등
+                children: [
+                  // 첫 번째 버튼: 다른 걱정 얘기하기
+                  SizedBox(
+                    width: 140,
+                    height: 50,
+                    child: WorryButton(
+                      text: '첫화면으로',
+                      onPressed: () {
+                        // 버튼 동작 정의
+                        _navigatorKey.currentState!.push(
+                          MaterialPageRoute(builder: (context) => WorryDollHelloPage()),
+                        );
+                      },
+                    ),
+                  ),
+                  // 두 번째 버튼: 다른 걱정 털어놓기
+                  SizedBox(
+                    width: 150,
+                    height: 50,
+                    child: WorryButton(
+                      text: '다른걱정 털어놓기',
+                      onPressed: () {
+                        // 버튼 동작 정의
+                        _navigatorKey.currentState!.push(
+                          MaterialPageRoute(builder: (context) => MyWorryPage()),
+                        );
+                      },
+                      //backgroundColor: AppColors.blue, // 버튼 색상 변경
+                    ),
+                  ),
+                ],
               ),
             ),
           ),

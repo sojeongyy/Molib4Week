@@ -36,7 +36,7 @@ class WorryButton extends StatelessWidget {
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(borderRadius),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 20),
+        padding: const EdgeInsets.symmetric(horizontal: 20), // 버튼 내부 padding
         elevation: 4.0,        // 버튼의 높이(그림자 강도)
         shadowColor: Colors.black,    // 그림자 색상
       ),
