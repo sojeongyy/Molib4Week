@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:worrydoll/WorryDoll/WorryingPage.dart';
 
 import '../core/DollProvider.dart';
 
@@ -71,7 +72,7 @@ class _DragBalloonPageState extends State<DragBalloonPage>
                   Future.delayed(const Duration(milliseconds: 300), () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => NextScreen()),
+                      MaterialPageRoute(builder: (context) => WorryingPage()),
                     );
                   });
                 }

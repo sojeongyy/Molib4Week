@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
@@ -9,10 +11,6 @@ import 'DragBalloonPage.dart';
 
 
 class WorryingPage extends StatefulWidget {
-  // Navigator 키 추가
-
-  //const MyWorryPage({Key? key}) : super(key: key);
-
   @override
   _WorryingPageState createState() => _WorryingPageState();
 }
@@ -22,10 +20,19 @@ class _WorryingPageState extends State<WorryingPage>
   late AnimationController _controller;
   late Animation<double> _animation;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final String firstMessage =
+      "지금 많이 힘들겠지만, 너무 애쓰지 않아도 괜찮아. 네가 할 수 있는 만큼만 해도 충분해!";
+  final String secondMessage = "이 걱정은 내가 짊어질테니 이제 푹 쉬어. 좋은 꿈 꿔!";
+
+  List<String> _displayedWords = [];
+  int _currentWordIndex = 0;
+  bool _showFirstMessage = true;
+  Timer? _timer;
 
   @override
   void initState() {
     super.initState();
+    _startTypingEffect(firstMessage);
 
     // AnimationController 초기화
     _controller = AnimationController(
@@ -44,19 +51,41 @@ class _WorryingPageState extends State<WorryingPage>
     _controller.dispose(); // AnimationController 해제
     super.dispose();
   }
+  void _startTypingEffect(String message) {
+    _timer?.cancel(); // 기존 타이머 취소
+    List<String> words = message.split(' '); // 메시지를 단어별로 나누기
+    _displayedWords = [];
+    _currentWordIndex = 0;
+
+    _timer = Timer.periodic(Duration(milliseconds: 300), (timer) {
+      if (_currentWordIndex < words.length) {
+        setState(() {
+          _displayedWords.add(words[_currentWordIndex]);
+          _currentWordIndex++;
+        });
+      } else {
+        timer.cancel(); // 모든 단어가 표시되면 타이머 중지
+        if (!_showFirstMessage) {
+          // 버튼 활성화
+          setState(() {});
+        }
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Navigator(
       key: _navigatorKey,
       onGenerateRoute: (settings) {
         return MaterialPageRoute(
-          builder: (context) => _buildBalloonPage(context),
+          builder: (context) => _buildWorryingPage(context),
         );
       },
     );
   }
 
-  Widget _buildBalloonPage(BuildContext context) {
+  Widget _buildWorryingPage(BuildContext context) {
 
     final selectedDollImagePath =
         Provider.of<DollProvider>(context).selectedDollImagePath ??
@@ -97,26 +126,20 @@ class _WorryingPageState extends State<WorryingPage>
               ),
             ),
           ),
-          // 말풍선 카드(절대 위치, 고정 크기)
+
+          // 말풍선
           Positioned(
             top: 390,
-            left: 0,
-            right: 0,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: SizedBox(
-                width: 305,
-                height: 150,
-                child: BalloonCard(
-                    content: '사실 요즘 일이 잘 안 풀리는 것 같아서 좀 답답해. \n'
-                        '어떻게 해야 할지 모르겠어.'
-                ),
-              ),
+            left: 20,
+            right: 20,
+            child: BalloonCard(
+              content: _displayedWords.join(' '), // 현재까지 표시된 단어를 이어서 표시
             ),
           ),
 
 
           // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
+          if (!_showFirstMessage)
           Positioned(
             top: 570,
             left: 0,
@@ -127,7 +150,7 @@ class _WorryingPageState extends State<WorryingPage>
                 width: 305,
                 height: 50,
                 child: WorryButton(
-                  text: '걱정 전달하기',
+                  text: '다른 걱정 털어놓기',
                   onPressed: () {
                     // Navigator를 사용해 MyWorryPage로 이동
                     _navigatorKey.currentState!.push(
@@ -141,5 +164,12 @@ class _WorryingPageState extends State<WorryingPage>
         ],
       ),
     );
+  }
+
+  void _switchToSecondMessage() {
+    setState(() {
+      _showFirstMessage = false;
+    });
+    _startTypingEffect(secondMessage);
   }
 }

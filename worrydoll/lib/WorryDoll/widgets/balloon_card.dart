@@ -28,6 +28,7 @@ class BalloonCard extends StatelessWidget {
     return Container(
       margin: EdgeInsets.zero, //
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+      height: 150,
       decoration: BoxDecoration(
         color: backgroundColor,
         borderRadius: BorderRadius.circular(borderRadius),
