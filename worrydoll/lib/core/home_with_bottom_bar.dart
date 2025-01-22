@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:worrydoll/DiaryCover/DiaryPageView.dart';
+import 'package:worrydoll/TodayWorry/TodayWorryPage.dart';
 import 'package:worrydoll/WorryDoll/WorryDollHelloPage.dart';
-
 import 'colors.dart';
-//import 'package:persistent_bottom_nav_bar/persistent-tab-view.dart';
 
 class HomeWithBottomBar extends StatefulWidget {
   @override
@@ -15,7 +15,8 @@ class _HomeWithBottomBarState extends State<HomeWithBottomBar> {
   // 예시 스크린
   final List<Widget> _screens = [
     WorryDollHelloPage(),
-    Center(child: Text('Business Screen')),
+    TodayWorryPage(),
+    DiaryPageView(),
   ];
 
   @override
@@ -36,6 +37,10 @@ class _HomeWithBottomBarState extends State<HomeWithBottomBar> {
           BottomNavigationBarItem(
             icon: Icon(Icons.cruelty_free),
             label: '걱정인형',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.event),
+            label: '오늘의걱정',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.edit_document),

@@ -1,26 +1,31 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
-import 'package:worrydoll/WorryDoll/widgets/BalloonDisplay.dart';
-import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
-import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
+import 'package:worrydoll/TodayWorry/widgets/BalloonDisplayTab.dart';
+import 'package:worrydoll/TodayWorry/widgets/WorryDialog.dart';
 
 import '../core/DollProvider.dart';
-import 'MyWorryPage.dart';
+import '../core/colors.dart';
 
-class WorryDollHelloPage extends StatefulWidget {
+class TodayWorryPage extends StatefulWidget {
   @override
-  _WorryDollHelloPageState createState() => _WorryDollHelloPageState();
+  _TodayWorryPageState createState() => _TodayWorryPageState();
 }
 
-class _WorryDollHelloPageState extends State<WorryDollHelloPage>
+class _TodayWorryPageState extends State<TodayWorryPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+  List<Map<String, dynamic>> balloonData = []; // JSON 데이터 저장
+
   @override
   void initState() {
     super.initState();
+    _loadDiaryData();
 
     // AnimationController 초기화
     _controller = AnimationController(
@@ -39,6 +44,50 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
     _controller.dispose(); // AnimationController 해제
     super.dispose();
   }
+
+  Future<void> _loadDiaryData() async {
+    // JSON 파일 로드
+    final String jsonString =
+    await rootBundle.loadString('assets/json/diary_dummy_data.json');
+    final List<dynamic> jsonData = json.decode(jsonString);
+
+    // 오늘 날짜 기준으로 필터링
+    final today = DateTime.now();
+    setState(() {
+      balloonData = jsonData
+          .where((entry) {
+        final date = DateTime.parse(entry['date_created']);
+        return date.year == today.year &&
+            date.month == today.month &&
+            date.day == today.day;
+      })
+          .cast<Map<String, dynamic>>()
+          .toList();
+    });
+  }
+
+
+  void _showWorryDialog(int index) {
+    final data = balloonData[index];
+    showDialog(
+      context: context,
+      //barrierDismissible: true,
+      builder: (context) => WorryDialog(
+        time: DateTime.parse(data['date_created']),
+        worry: data['content'],
+        advice: data['comfort_message'],
+        onPopBalloon: () {
+          Navigator.pop(context); // 다이얼로그 닫기 먼저 실행
+          setState(() {
+            balloonData.removeAt(index); // 풍선 데이터를 삭제
+          });
+        },
+        backgroundColor: index == 0 ? AppColors.pink : AppColors.yellow, // 색상 설정
+        buttonColor: index == 0 ? AppColors.yellow : AppColors.pink, // 버튼 색상 설정
+      ),
+    );
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +125,7 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
 
         // 토끼 인형 이미지(절대 위치, 고정 크기)
         Positioned(
-          top: 100,
+          top: 200,
           left: 0,
           right: 0, // left와 right를 모두 0으로 두고
           child: Align(
@@ -99,53 +148,20 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
           ),
         ),
 
-        // 말풍선 카드(절대 위치, 고정 크기)
-        Positioned(
-          top: 390,
-          left: 0,
-          right: 0,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: SizedBox(
-              width: 305,
-              height: 150,
-              child: BalloonCard(
-                content: '안녕! 나는 너만의 걱정인형 ' + selectedDollName + '이야.\n'
-                    '오늘도 행복한 하루 보내~\n'
-                    '걱정이 있으면 나한테 털어놔봐!',
-              ),
-            ),
-          ),
-        ),
 
-        BalloonDisplay(
-          balloonSize: 150, // 풍선 크기 조정
-          // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
-          // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
-        ),
+        // BalloonDisplay(
+        //   balloonSize: 150, // 풍선 크기 조정
+        //   redBalloonOffset: Offset(70, 170), // 빨간 풍선 위치
+        //   yellowBalloonOffset: Offset(70, 170), // 노란 풍선 위치
+        // ),
+        // 풍선 디스플레이
 
-        // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
-        Positioned(
-          top: 570,
-          left: 0,
-          right: 0,
-          child: Align(
-            alignment: Alignment.topCenter,
-            child: SizedBox(
-              width: 305,
-              height: 50,
-              child: WorryButton(
-                text: '걱정 털어놓기',
-                onPressed: () {
-                  // Navigator를 사용해 MyWorryPage로 이동
-                  _navigatorKey.currentState!.push(
-                    MaterialPageRoute(builder: (context) => MyWorryPage()),
-                  );
-                },
-              ),
-            ),
+          BalloonDisplayTab(
+            balloonSize: 150,
+            onRedBalloonTap: balloonData.isNotEmpty ? () => _showWorryDialog(0) : null,
+            onYellowBalloonTap: balloonData.length > 1 ? () => _showWorryDialog(1) : null, // 두 번째 데이터가 있을 경우만
           ),
-        ),
+
       ],
     );
   }

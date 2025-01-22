@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:provider/provider.dart';
+import 'package:worrydoll/WorryDoll/widgets/BalloonDisplay.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
-
+import '../core/DollProvider.dart';
+import '../core/colors.dart';
+import 'DragBalloonPage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -10,6 +14,10 @@ import 'ResponsePage.dart';
 
 
 class MyWorryPage extends StatefulWidget {
+   // Navigator 키 추가
+
+  //const MyWorryPage({Key? key}) : super(key: key);
+
   @override
   _MyWorryPageState createState() => _MyWorryPageState();
 }
@@ -18,6 +26,7 @@ class _MyWorryPageState extends State<MyWorryPage>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
+  final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
   // stt
   late stt.SpeechToText _speech;
@@ -89,6 +98,22 @@ class _MyWorryPageState extends State<MyWorryPage>
   // ui
   @override
   Widget build(BuildContext context) {
+    return Navigator(
+      key: _navigatorKey,
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(
+          builder: (context) => _buildBalloonPage(context),
+        );
+      },
+    );
+  }
+
+  Widget _buildBalloonPage(BuildContext context) {
+
+    final selectedDollImagePath =
+        Provider.of<DollProvider>(context).selectedDollImagePath ??
+            'assets/images/dolls/default.png'; // 선택되지 않았을 경우 기본 이미지
+
     return Scaffold(
       body: Stack(
         children: [
@@ -99,6 +124,8 @@ class _MyWorryPageState extends State<MyWorryPage>
               fit: BoxFit.cover,
             ),
           ),
+
+
 
           // 토끼 인형 이미지(절대 위치, 고정 크기)
           Positioned(
@@ -117,8 +144,8 @@ class _MyWorryPageState extends State<MyWorryPage>
                   );
                 },
                 child: Image.asset(
-                  'assets/images/dolls/rabbit_shadow.png',
-                  width: 200,
+                  selectedDollImagePath,
+                  width: 170,
                   fit: BoxFit.contain,
                 ),
               ),
@@ -141,7 +168,9 @@ class _MyWorryPageState extends State<MyWorryPage>
             ),
           ),
 
-
+          BalloonDisplay(
+            balloonSize: 150, // 풍선 크기 조정
+          ),
           // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
           Positioned(
             top: 570,
@@ -154,16 +183,23 @@ class _MyWorryPageState extends State<MyWorryPage>
                 height: 50,
                 child: WorryButton(
                   text: '걱정 전달하기',
-                  onPressed: () async {
-                    print('걱정 전달하기 버튼 클릭됨');
-                    print(_recognizedText);
-                    _stopListening();
-                    // ResponsePage로 recognizedText를 전달
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => ResponsePage(content: _recognizedText),
-                      ),
+
+                  onPressed: () {
+                    // Navigator를 사용해 MyWorryPage로 이동
+                    _navigatorKey.currentState!.push(
+                      MaterialPageRoute(builder: (context) => DragBalloonPage()),
+
+//                   onPressed: () async {
+//                     print('걱정 전달하기 버튼 클릭됨');
+//                     print(_recognizedText);
+//                     _stopListening();
+//                     // ResponsePage로 recognizedText를 전달
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (context) => ResponsePage(content: _recognizedText),
+//                       ),
+
                     );
                   },
                 ),
@@ -175,4 +211,3 @@ class _MyWorryPageState extends State<MyWorryPage>
     );
   }
 }
-

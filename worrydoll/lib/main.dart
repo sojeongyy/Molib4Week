@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart';
+import 'package:provider/provider.dart';
 import 'SelectDoll/SelectDollPage.dart';
+import 'core/DollProvider.dart';
 import 'core/colors.dart';
 import 'core/home_with_bottom_bar.dart';
 
 
 
-void main() {
-  runApp(MyApp());
+void main() async {
+  await initializeDateFormatting();
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => DollProvider(),
+      child: MyApp(),
+    ),
+  );
 }
 
 class MyApp extends StatelessWidget {
