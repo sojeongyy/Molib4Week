@@ -31,6 +31,7 @@ class _WorryingPageState extends State<WorryingPage>
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
   late String firstMessage;
   final String secondMessage = "이 걱정은 내가 짊어질테니 이제 푹 쉬어. 좋은 꿈 꿔!";
+  bool _isSecondMessagePlaying = false;
 
   AudioPlayer _audioPlayer = AudioPlayer();
   Timer? _textUpdateTimer;
@@ -52,7 +53,8 @@ class _WorryingPageState extends State<WorryingPage>
     _controller = AnimationController(
       duration: const Duration(seconds: 2), // 애니메이션 반복 시간
       vsync: this,
-    )..repeat(reverse: true); // 애니메이션 반복 (좌우로 흔들림)
+    )
+      ..repeat(reverse: true); // 애니메이션 반복 (좌우로 흔들림)
 
     // 좌우 흔들림을 위한 Animation 설정 (각도 -0.05 ~ 0.05 라디안)
     _animation = Tween<double>(begin: -0.05, end: 0.05).animate(
@@ -65,31 +67,39 @@ class _WorryingPageState extends State<WorryingPage>
     _controller.dispose(); // AnimationController 해제
     super.dispose();
   }
+
   void _startTypingEffect(String message) {
     _timer?.cancel(); // 기존 타이머 취소
     List<String> words = message.split(' '); // 메시지를 단어별로 나누기
     _displayedWords = [];
     _currentWordIndex = 0;
 
-    _timer = Timer.periodic(Duration(milliseconds: 300), (timer) { // 이걸로 속도 조정 가능!
-      if (_currentWordIndex < words.length) {
-        setState(() {
-          _displayedWords.add(words[_currentWordIndex]);
-          _currentWordIndex++;
+    _timer =
+        Timer.periodic(Duration(milliseconds: 300), (timer) { // 이걸로 속도 조정 가능!
+          if (_currentWordIndex < words.length) {
+            setState(() {
+              _displayedWords.add(words[_currentWordIndex]);
+              _currentWordIndex++;
+            });
+          } else {
+            timer.cancel(); // 모든 단어가 표시되면 타이머 중지
+            if (_showFirstMessage) {
+              // 첫 번째 메시지가 끝난 후 두 번째 메시지로 전환
+              Future.delayed(Duration(milliseconds: 500), () {
+                //_switchToSecondMessage();
+                _isSecondMessagePlaying = true;
+              });
+            }
+          }
         });
-      } else {
-        timer.cancel(); // 모든 단어가 표시되면 타이머 중지
-        if (_showFirstMessage) {
-          // 첫 번째 메시지가 끝난 후 두 번째 메시지로 전환
-          Future.delayed(Duration(milliseconds: 500), () {
-            _switchToSecondMessage();
-          });
-        }
-      }
-    });
   }
 
   Future<void> _playAudio(String url, String comfortMessage) async {
+    if (_isSecondMessagePlaying) {
+      print('Audio is already playing. Ignoring this call.');
+      return;
+    }
+
     final words = comfortMessage.split(' ');
     int wordIndex = 0;
 
@@ -98,8 +108,12 @@ class _WorryingPageState extends State<WorryingPage>
       setState(() {
         _displayedText = comfortMessage;
       });
-    });
 
+      // 오디오 재생이 끝난 후 두 번째 메시지로 전환
+      _switchToSecondMessage();
+      _isSecondMessagePlaying = true;
+    });
+    //_isSecondMessagePlaying = false;
     setState(() {
       _displayedText = '';
     });
@@ -129,9 +143,10 @@ class _WorryingPageState extends State<WorryingPage>
   }
 
   Widget _buildWorryingPage(BuildContext context) {
-
     final selectedDollImagePath =
-        Provider.of<DollProvider>(context).selectedDollImagePath ??
+        Provider
+            .of<DollProvider>(context)
+            .selectedDollImagePath ??
             'assets/images/dolls/default.png'; // 선택되지 않았을 경우 기본 이미지
 
     return Scaffold(
@@ -170,12 +185,12 @@ class _WorryingPageState extends State<WorryingPage>
             ),
           ),
 
-          // 풍선 이미지
-          BalloonDisplay(
-            balloonSize: 150, // 풍선 크기 조정
-            // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
-            // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
-          ),
+          // // 풍선 이미지
+          // BalloonDisplay(
+          //   balloonSize: 150, // 풍선 크기 조정
+          //   // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
+          //   // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
+          // ),
 
           // 말풍선
           Positioned(
@@ -183,64 +198,86 @@ class _WorryingPageState extends State<WorryingPage>
             left: 20,
             right: 20,
             child: BalloonCard(
-              content: _displayedText.isNotEmpty ? _displayedText : '...', // 현재까지 표시된 단어를 이어서 표시
+              content: _displayedText.isNotEmpty
+                  ? _displayedText
+                  : '...', // 현재까지 표시된 단어를 이어서 표시
             ),
           ),
 
 
           // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
           if (!_showFirstMessage)
-          Positioned(
-            top: 570,
-            left: 0,
-            right: 0,
-            child: Align(
-              alignment: Alignment.topCenter,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 버튼 간격 균등
-                children: [
-                  // 첫 번째 버튼: 다른 걱정 얘기하기
-                  SizedBox(
-                    width: 140,
-                    height: 50,
-                    child: WorryButton(
-                      text: '첫화면으로',
-                      onPressed: () {
-                        // 버튼 동작 정의
-                        _navigatorKey.currentState!.push(
-                          MaterialPageRoute(builder: (context) => WorryDollHelloPage()),
-                        );
-                      },
+            Positioned(
+              top: 570,
+              left: 0,
+              right: 0,
+              child: Align(
+                alignment: Alignment.topCenter,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly, // 버튼 간격 균등
+                  children: [
+                    // 첫 번째 버튼: 다른 걱정 얘기하기
+                    SizedBox(
+                      width: 140,
+                      height: 50,
+                      child: WorryButton(
+                        text: '첫화면으로',
+                        onPressed: () {
+                          // 버튼 동작 정의
+                          _navigatorKey.currentState!.push(
+                            MaterialPageRoute(
+                                builder: (context) => WorryDollHelloPage()),
+                          );
+                        },
+                      ),
                     ),
-                  ),
-                  // 두 번째 버튼: 다른 걱정 털어놓기
-                  SizedBox(
-                    width: 150,
-                    height: 50,
-                    child: WorryButton(
-                      text: '다른걱정 털어놓기',
-                      onPressed: () {
-                        // 버튼 동작 정의
-                        _navigatorKey.currentState!.push(
-                          MaterialPageRoute(builder: (context) => MyWorryPage()),
-                        );
-                      },
-                      //backgroundColor: AppColors.blue, // 버튼 색상 변경
+                    // 두 번째 버튼: 다른 걱정 털어놓기
+                    SizedBox(
+                      width: 150,
+                      height: 50,
+                      child: WorryButton(
+                        text: '다른걱정 털어놓기',
+                        onPressed: () {
+                          // 버튼 동작 정의
+                          _navigatorKey.currentState!.push(
+                            MaterialPageRoute(
+                                builder: (context) => MyWorryPage()),
+                          );
+                        },
+                        //backgroundColor: AppColors.blue, // 버튼 색상 변경
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
   }
 
   void _switchToSecondMessage() {
+    print('Switching to the second message');
+    print('isSecondMessagePlaying: $_isSecondMessagePlaying');
+    if (_isSecondMessagePlaying) return;
     setState(() {
       _showFirstMessage = false;
+      _displayedText = '';
+      //_isSecondMessagePlaying = true; // 재생 상태 업데이트
     });
-    _startTypingEffect(secondMessage);
+    //_startTypingEffect(secondMessage); // 글자
+    String url = 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-6f9979d5f6-xkg4p/088fe74b-3851-4084-a2a4-015ce42a61b8.wav?Expires=1737614904&Signature=sa0b09jNp30hr7TNiy7LazCmJOGx30854jMznzwKtkJg4SQU0~FtkGOFB1OJgXtK781jbBybkLqVRXrZmeGrXSY6AZTJhnc84o1sCrHyQ7j38ZCbheejMd1EHFnBaCFE6s3lRMmo1Uc1VXDzgl6XMN4gQ9iKfLDmqRKPpvaWWj4KK5BUqMV6hrPFdDr6SDqHY9RZhbweFjfD-J~Y1iLd4Ya00Zjmtt-UOBz7ZxztDXJd-3qbbIvfeFO5b8bYFo5MqIcxl~nwrelhi4aC9mBbqLhInbeY06jj9SUXbBZUlXl7EWsZn0PQjvW0gsC-3gg4Jo~lF9TjgzwMkcVal~uBIQ__&Key-Pair-Id=K11PO7SMLJYOIE';
+    _playAudio(url, secondMessage).then((_) {
+      // 재생이 완료되면 상태 초기화
+      setState(() {
+        _isSecondMessagePlaying = true;
+      });
+    }).catchError((error) {
+      // 오류 발생 시 상태 초기화
+      setState(() {
+        _isSecondMessagePlaying = true;
+      });
+      print('Error while playing second message: $error');
+    });
   }
 }

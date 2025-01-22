@@ -168,9 +168,9 @@ class _MyWorryPageState extends State<MyWorryPage>
             ),
           ),
 
-          BalloonDisplay(
-            balloonSize: 150, // 풍선 크기 조정
-          ),
+          // BalloonDisplay(
+          //   balloonSize: 150, // 풍선 크기 조정
+          // ),
           // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
           Positioned(
             top: 570,

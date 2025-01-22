@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
@@ -26,11 +27,14 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
   String _comfortMessage = '';
   String _displayedText = '';
   String _audioUrl = ''; // 오디오 URL
+  int _balloonType = 1; // 1: red, 2: yellow, 3: blue
+  String _balloonColor = 'red'; // 기본값 red
 
 
   @override
   void initState() {
     super.initState();
+    _selectRandomBalloon();
     _sendToServer();  // 서버에 데이터 전송
     // AnimationController 초기화
     _controller = AnimationController(
@@ -50,6 +54,23 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
     super.dispose();
   }
 
+  /// 랜덤 풍선 색상 선택
+  void _selectRandomBalloon() {
+    final random = Random();
+    final balloonOptions = [
+      {'color': 'red', 'type': 1},
+      {'color': 'yellow', 'type': 2},
+      {'color': 'blue', 'type': 3},
+    ];
+
+    final selected = balloonOptions[random.nextInt(balloonOptions.length)];
+    setState(() {
+      _balloonColor = selected['color'] as String;
+      _balloonType = selected['type'] as int;
+    });
+    print('Selected Balloon: $_balloonColor ($_balloonType)');
+  }
+
   Future<void> _sendToServer() async {
     await dotenv.load();
     final apiUrl = dotenv.env['API_URL']!;  // Get Comfort message URL
@@ -66,7 +87,7 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'content': widget.content}),
+        body: jsonEncode({'content': widget.content, 'balloon_color' : _balloonColor}),
       );
       print('응답 상태 코드: ${response.statusCode}');
       print('응답 본문: ${response.body}');
@@ -206,14 +227,8 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
     final balloonCount = Provider.of<DollProvider>(context).balloonCount;
 
     // 풍선 이미지 경로 결정
-    String balloonImagePath;
-    if (balloonCount == 0) {
-      balloonImagePath = 'assets/images/balloons/red_balloon.png';
-    } else if (balloonCount == 1) {
-      balloonImagePath = 'assets/images/balloons/yellow_balloon.png';
-    } else {
-      balloonImagePath = 'assets/images/balloons/yellow_balloon.png';
-    }
+
+    final balloonImagePath = 'assets/images/balloons/${_balloonColor}_balloon.png';
 
     return Scaffold(
       body: Stack(

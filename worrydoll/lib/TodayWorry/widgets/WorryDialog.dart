@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
@@ -22,6 +23,11 @@ class WorryDialog extends StatelessWidget {
     this.backgroundColor = const Color(0xFFFFF0F0), // 기본 배경색 설정
     this.buttonColor = Colors.white,
   }) : super(key: key);
+
+  void _playPopSound() async {
+    final player = AudioPlayer();
+    await player.play(AssetSource('audio/pop_sound.mp3'));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +75,15 @@ class WorryDialog extends StatelessWidget {
         ],
       ),
       actions: [
-        WorryButton(text: '걱정풍선 터뜨리기', onPressed: onPopBalloon, backgroundColor: buttonColor, fontColor: Colors.black),
+        WorryButton(
+          text: '걱정풍선 터뜨리기',
+          onPressed: () {
+            _playPopSound(); // 펑 소리 재생
+            onPopBalloon(); // 풍선 삭제
+          },
+          backgroundColor: buttonColor,
+          fontColor: Colors.black,
+        ),
       ],
     );
   }
