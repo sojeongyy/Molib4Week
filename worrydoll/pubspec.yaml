@@ -37,6 +37,9 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.8
+  table_calendar: ^3.0.8
+  intl: ^0.20.1
+  provider: ^6.1.2
 
 dev_dependencies:
   flutter_test:
@@ -62,22 +65,30 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/images/dolls/dog.png
-   - assets/images/dolls/elephant.png
-   - assets/images/dolls/horse.png
-   - assets/images/dolls/monkey.png
-   - assets/images/dolls/penguin.png
-   - assets/images/dolls/rabbit.png
-   - assets/images/dolls/dog_shadow.png
-   - assets/images/dolls/elephant_shadow.png
-   - assets/images/dolls/horse_shadow.png
-   - assets/images/dolls/monkey_shadow.png
-   - assets/images/dolls/penguin_shadow.png
-   - assets/images/dolls/rabbit_shadow.png
-   - assets/images/background.jpg
-   - assets/images/wood_background.jpg
-   - assets/images/wood_floor.png
+
+    - assets/images/dolls/bear.png
+    - assets/images/dolls/frog.png
+    - assets/images/dolls/giraffe.png
+    - assets/images/dolls/lion.png
+    - assets/images/dolls/rabbit.png
+    - assets/images/dolls/slow.png
+    - assets/images/background.jpg
+    - assets/images/wood_background.jpg
+    - assets/images/wood_floor.png
+    - assets/images/diary_background.png
+    - assets/images/diary/music_note.png
+    - assets/images/diary/pencil.png
+    - assets/images/diary/rainbow.png
+    - assets/images/diary/raindrop.png
+
+    - assets/images/balloons/blue_balloon.png
+    - assets/images/balloons/red_balloon.png
+    - assets/images/balloons/yellow_balloon.png
+
+    - assets/json/diary_dummy_data.json
+
    - .env
+
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -91,9 +102,14 @@ flutter:
   # list giving the asset and other descriptors for the font. For
   # example:
   fonts:
-   - family: ongle
-     fonts:
+    - family: ongle
+      fonts:
        - asset: assets/fonts/ongle.ttf
+
+    - family: baby
+      fonts:
+      - asset: assets/fonts/baby.ttf
+
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
