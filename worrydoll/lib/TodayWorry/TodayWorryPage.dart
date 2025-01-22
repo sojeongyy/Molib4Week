@@ -91,18 +91,6 @@ class _TodayWorryPageState extends State<TodayWorryPage>
   }
 
 
-  // @override
-  // Widget build(BuildContext context) {
-  //   return Navigator(
-  //     key: _navigatorKey,
-  //     onGenerateRoute: (settings) {
-  //       return MaterialPageRoute(
-  //         builder: (context) => _buildHelloPage(context),
-  //       );
-  //     },
-  //   );
-  // }
-
   List<Widget> _buildBalloons() {
     return balloonData.asMap().entries.map((entry) {
       final index = entry.key;
@@ -219,18 +207,6 @@ class _TodayWorryPageState extends State<TodayWorryPage>
         ),
 
 
-        // BalloonDisplay(
-        //   balloonSize: 150, // 풍선 크기 조정
-        //   redBalloonOffset: Offset(70, 170), // 빨간 풍선 위치
-        //   yellowBalloonOffset: Offset(70, 170), // 노란 풍선 위치
-        // ),
-        // 풍선 디스플레이
-
-          // BalloonDisplayTab(
-          //   balloonSize: 150,
-          //   onRedBalloonTap: balloonData.isNotEmpty ? () => _showWorryDialog(0) : null,
-          //   onYellowBalloonTap: balloonData.length > 1 ? () => _showWorryDialog(1) : null, // 두 번째 데이터가 있을 경우만
-          // ),
         ..._buildBalloons(),
       ],
     );

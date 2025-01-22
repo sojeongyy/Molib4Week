@@ -89,6 +89,8 @@ flutter:
 
     - assets/json/diary_dummy_data.json
 
+    - assets/audio/pop_sound.mp3
+
     - .env
 
 
