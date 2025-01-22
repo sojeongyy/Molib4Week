@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
+import 'package:worrydoll/core/colors.dart';
+
+import '../../core/DollProvider.dart';
 
 class WorryDialog extends StatelessWidget {
   final DateTime time;
@@ -7,6 +11,7 @@ class WorryDialog extends StatelessWidget {
   final String advice;
   final VoidCallback onPopBalloon;
   final Color backgroundColor; // 배경색 추가
+  final Color buttonColor; // 버튼 색상 추가
 
   const WorryDialog({
     Key? key,
@@ -15,10 +20,15 @@ class WorryDialog extends StatelessWidget {
     required this.advice,
     required this.onPopBalloon,
     this.backgroundColor = const Color(0xFFFFF0F0), // 기본 배경색 설정
+    this.buttonColor = Colors.white,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+
+    final selectedDollName =
+        Provider.of<DollProvider>(context).selectedDollName ?? "걱정인형"; // 선택되지 않았을 경우 기본 이미지
+
     return AlertDialog(
       backgroundColor: backgroundColor,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
@@ -52,18 +62,14 @@ class WorryDialog extends StatelessWidget {
               borderRadius: BorderRadius.circular(20),
             ),
             child: Text(
-              advice,
+              advice + ' -$selectedDollName',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
             ),
           ),
         ],
       ),
       actions: [
-        // TextButton(
-        //   onPressed: onPopBalloon,
-        //   child: Text('걱정 풍선 터뜨리기', style: TextStyle(color: Colors.red)),
-        // ),
-        WorryButton(text: '걱정풍선 터뜨리기', onPressed: onPopBalloon),
+        WorryButton(text: '걱정풍선 터뜨리기', onPressed: onPopBalloon, backgroundColor: buttonColor, fontColor: Colors.black),
       ],
     );
   }

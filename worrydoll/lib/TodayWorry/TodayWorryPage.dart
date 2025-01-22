@@ -5,8 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:worrydoll/TodayWorry/widgets/BalloonDisplayTab.dart';
 import 'package:worrydoll/TodayWorry/widgets/WorryDialog.dart';
-import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
-import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
 
 import '../core/DollProvider.dart';
 import '../core/colors.dart';
@@ -79,12 +77,13 @@ class _TodayWorryPageState extends State<TodayWorryPage>
         worry: data['content'],
         advice: data['comfort_message'],
         onPopBalloon: () {
+          Navigator.pop(context); // 다이얼로그 닫기 먼저 실행
           setState(() {
             balloonData.removeAt(index); // 풍선 데이터를 삭제
           });
-          Navigator.pop(context); // 다이얼로그 닫기
         },
         backgroundColor: index == 0 ? AppColors.pink : AppColors.yellow, // 색상 설정
+        buttonColor: index == 0 ? AppColors.yellow : AppColors.pink, // 버튼 색상 설정
       ),
     );
   }
@@ -156,7 +155,7 @@ class _TodayWorryPageState extends State<TodayWorryPage>
         //   yellowBalloonOffset: Offset(70, 170), // 노란 풍선 위치
         // ),
         // 풍선 디스플레이
-        if (balloonData.isNotEmpty)
+
           BalloonDisplayTab(
             balloonSize: 150,
             onRedBalloonTap: balloonData.isNotEmpty ? () => _showWorryDialog(0) : null,
