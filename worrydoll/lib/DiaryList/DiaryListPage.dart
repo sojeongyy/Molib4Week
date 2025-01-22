@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart'; // JSON 파일 로드용
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:worrydoll/DiaryList/widgets/DiaryListComponent.dart';
 
 import '../core/colors.dart';
@@ -17,6 +18,8 @@ class DiaryListPage extends StatefulWidget {
 
 class _DiaryListPageState extends State<DiaryListPage> {
   List<Map<String, dynamic>> diaryEntries = [];
+  bool isLoading = true;
+  String? errorMessage;
 
   @override
   void initState() {
@@ -25,22 +28,35 @@ class _DiaryListPageState extends State<DiaryListPage> {
   }
 
   Future<void> _loadDiaryEntries() async {
-    // JSON 파일 로드
-    final String response =
-    await rootBundle.loadString('assets/json/diary_dummy_data.json');
-    final List<dynamic> data = json.decode(response);
+    await dotenv.load();
+    final String baseUrl = dotenv.env['API_URL']!;
+    final String formattedDate =
+        '${widget.selectedDate.year}-${widget.selectedDate.month.toString().padLeft(2, '0')}-${widget.selectedDate.day.toString().padLeft(2, '0')}';
 
-    // selectedDate와 일치하는 데이터 필터링
-    final filteredData = data.where((entry) {
-      final entryDate = DateTime.parse(entry['date_created']);
-      return entryDate.year == widget.selectedDate.year &&
-          entryDate.month == widget.selectedDate.month &&
-          entryDate.day == widget.selectedDate.day;
-    }).toList();
+    try {
+      final response = await http.get(Uri.parse('$baseUrl?date=$formattedDate'));
+      print('$baseUrl?date=$formattedDate');
 
-    setState(() {
-      diaryEntries = filteredData.cast<Map<String, dynamic>>();
-    });
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final List<dynamic> data = json.decode(decodedBody);
+
+        setState(() {
+          diaryEntries = data.cast<Map<String, dynamic>>();
+          isLoading = false;
+        });
+      } else {
+        setState(() {
+          isLoading = false;
+          errorMessage = '데이터를 불러오는 데 실패했습니다. 상태 코드: ${response.statusCode}';
+        });
+      }
+    } catch (e) {
+      setState(() {
+        isLoading = false;
+        errorMessage = '데이터를 불러오는 중 오류가 발생했습니다: $e';
+      });
+    }
   }
 
   @override
@@ -77,6 +93,7 @@ class _DiaryListPageState extends State<DiaryListPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => DiaryDetailPage(
+                          worryId: entry['id'],
                           dateTime: entryTime,
                           content: entry['content'],
                           comfortMessage: entry['comfort_message'] ?? '',
