@@ -256,9 +256,11 @@ class _WorryingPageState extends State<WorryingPage>
     );
   }
 
+
   void _switchToSecondMessage() {
     print('Switching to the second message');
     print('isSecondMessagePlaying: $_isSecondMessagePlaying');
+
     if (_isSecondMessagePlaying) return;
     setState(() {
       _showFirstMessage = false;
@@ -266,7 +268,8 @@ class _WorryingPageState extends State<WorryingPage>
       //_isSecondMessagePlaying = true; // 재생 상태 업데이트
     });
     //_startTypingEffect(secondMessage); // 글자
-    String url = 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-6f9979d5f6-xkg4p/088fe74b-3851-4084-a2a4-015ce42a61b8.wav?Expires=1737614904&Signature=sa0b09jNp30hr7TNiy7LazCmJOGx30854jMznzwKtkJg4SQU0~FtkGOFB1OJgXtK781jbBybkLqVRXrZmeGrXSY6AZTJhnc84o1sCrHyQ7j38ZCbheejMd1EHFnBaCFE6s3lRMmo1Uc1VXDzgl6XMN4gQ9iKfLDmqRKPpvaWWj4KK5BUqMV6hrPFdDr6SDqHY9RZhbweFjfD-J~Y1iLd4Ya00Zjmtt-UOBz7ZxztDXJd-3qbbIvfeFO5b8bYFo5MqIcxl~nwrelhi4aC9mBbqLhInbeY06jj9SUXbBZUlXl7EWsZn0PQjvW0gsC-3gg4Jo~lF9TjgzwMkcVal~uBIQ__&Key-Pair-Id=K11PO7SMLJYOIE';
+    //String url = 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-6f9979d5f6-xkg4p/088fe74b-3851-4084-a2a4-015ce42a61b8.wav?Expires=1737614904&Signature=sa0b09jNp30hr7TNiy7LazCmJOGx30854jMznzwKtkJg4SQU0~FtkGOFB1OJgXtK781jbBybkLqVRXrZmeGrXSY6AZTJhnc84o1sCrHyQ7j38ZCbheejMd1EHFnBaCFE6s3lRMmo1Uc1VXDzgl6XMN4gQ9iKfLDmqRKPpvaWWj4KK5BUqMV6hrPFdDr6SDqHY9RZhbweFjfD-J~Y1iLd4Ya00Zjmtt-UOBz7ZxztDXJd-3qbbIvfeFO5b8bYFo5MqIcxl~nwrelhi4aC9mBbqLhInbeY06jj9SUXbBZUlXl7EWsZn0PQjvW0gsC-3gg4Jo~lF9TjgzwMkcVal~uBIQ__&Key-Pair-Id=K11PO7SMLJYOIE';
+    String url = 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-7cbf478964-hf7kc/317d7fd9-f71a-4365-8234-51747b85368f.wav?Expires=1737630580&Signature=drBA2ARuGR4YPbLkcvMh6xdzsT3IDtCOr5DCj1qqqrqllXmfKQCL8JF55qNEQ42OAkxL~hOv9geMNPLZIviiyuW-ww4l9n0WtMy9lCFhLR15yDEt~-ELI5pyUHF-37FIO3oTu4pghwyK0OEkTFxJWskS1AUb8Jp-Fe6wGLi0KDrM3-X9aEVoiN2bF5W5NqIYEAQM-S9xf4BkKS4gKJLuAsS1OlILMWfX4sb-9OSPZDt2zMABTiZcLsf61JK0MqJB6cpGZ34MePYpa438Xfk1qZIcSSOV3G-P-Ts-m3y2GjzftNEw-GRQZ9-3f9sCDNQbjId9XS6TpOUMtD0K1CVohA__&Key-Pair-Id=K11PO7SMLJYOIE';
     _playAudio(url, secondMessage).then((_) {
       // 재생이 완료되면 상태 초기화
       setState(() {
