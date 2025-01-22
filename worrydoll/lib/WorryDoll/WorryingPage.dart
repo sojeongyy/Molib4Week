@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/MyWorryPage.dart';
@@ -14,6 +15,11 @@ import 'DragBalloonPage.dart';
 
 
 class WorryingPage extends StatefulWidget {
+  final String audioUrl;
+  final String comfortMessage;
+
+  WorryingPage({required this.audioUrl, required this.comfortMessage});
+
   @override
   _WorryingPageState createState() => _WorryingPageState();
 }
@@ -23,19 +29,24 @@ class _WorryingPageState extends State<WorryingPage>
   late AnimationController _controller;
   late Animation<double> _animation;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
-  final String firstMessage =
-      "지금 많이 힘들겠지만, 너무 애쓰지 않아도 괜찮아. 네가 할 수 있는 만큼만 해도 충분해!";
+  late String firstMessage;
   final String secondMessage = "이 걱정은 내가 짊어질테니 이제 푹 쉬어. 좋은 꿈 꿔!";
+
+  AudioPlayer _audioPlayer = AudioPlayer();
+  Timer? _textUpdateTimer;
 
   List<String> _displayedWords = [];
   int _currentWordIndex = 0;
   bool _showFirstMessage = true;
   Timer? _timer;
+  String _displayedText = '';
 
   @override
   void initState() {
     super.initState();
-    _startTypingEffect(firstMessage);
+    firstMessage = widget.comfortMessage;
+    _playAudio(widget.audioUrl, firstMessage);
+    //_startTypingEffect(firstMessage);
 
     // AnimationController 초기화
     _controller = AnimationController(
@@ -74,6 +85,33 @@ class _WorryingPageState extends State<WorryingPage>
             _switchToSecondMessage();
           });
         }
+      }
+    });
+  }
+
+  Future<void> _playAudio(String url, String comfortMessage) async {
+    final words = comfortMessage.split(' ');
+    int wordIndex = 0;
+
+    await _audioPlayer.play(UrlSource(url));
+    _audioPlayer.onPlayerComplete.listen((event) {
+      setState(() {
+        _displayedText = comfortMessage;
+      });
+    });
+
+    setState(() {
+      _displayedText = '';
+    });
+
+    _textUpdateTimer = Timer.periodic(Duration(milliseconds: 300), (timer) {
+      if (wordIndex < words.length) {
+        setState(() {
+          _displayedText += '${words[wordIndex]} ';
+        });
+        wordIndex++;
+      } else {
+        timer.cancel();
       }
     });
   }
@@ -145,7 +183,7 @@ class _WorryingPageState extends State<WorryingPage>
             left: 20,
             right: 20,
             child: BalloonCard(
-              content: _displayedWords.join(' '), // 현재까지 표시된 단어를 이어서 표시
+              content: _displayedText.isNotEmpty ? _displayedText : '...', // 현재까지 표시된 단어를 이어서 표시
             ),
           ),
 

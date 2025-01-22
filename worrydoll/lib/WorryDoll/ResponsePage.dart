@@ -139,13 +139,13 @@ class _ResponsePageState extends State<ResponsePage> {
 
     while (true) {
       try {
-        print('Polling 중: $speakV2Url');
+        //print('Polling 중: $speakV2Url');
         final response = await http.get(Uri.parse(speakV2Url), headers: {
           'Authorization': 'Bearer ${dotenv.env['TYPECAST_API_KEY']}',
         });
 
-        print('Polling 응답 상태 코드: ${response.statusCode}');
-        print('Polling 응답 본문: ${response.body}');
+        //print('Polling 응답 상태 코드: ${response.statusCode}');
+        //print('Polling 응답 본문: ${response.body}');
 
         final responseJson = jsonDecode(response.body);
         if (responseJson['result']['status'] == 'done') {

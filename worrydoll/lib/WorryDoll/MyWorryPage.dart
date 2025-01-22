@@ -187,7 +187,7 @@ class _MyWorryPageState extends State<MyWorryPage>
                   onPressed: () {
                     // Navigator를 사용해 MyWorryPage로 이동
                     _navigatorKey.currentState!.push(
-                      MaterialPageRoute(builder: (context) => DragBalloonPage()),
+                      MaterialPageRoute(builder: (context) => DragBalloonPage(content: _recognizedText)),
 
 //                   onPressed: () async {
 //                     print('걱정 전달하기 버튼 클릭됨');

@@ -1,24 +1,37 @@
+import 'dart:async';
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/WorryingPage.dart';
 
 import '../core/DollProvider.dart';
 
 class DragBalloonPage extends StatefulWidget {
+
+  final String content;
+
+  DragBalloonPage({required this.content});
+
   @override
   _DragBalloonPageState createState() => _DragBalloonPageState();
 }
 
-class _DragBalloonPageState extends State<DragBalloonPage>
-    with SingleTickerProviderStateMixin {
+class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
   bool _isDropped = false; // 풍선이 드롭되었는지 확인
+  String _comfortMessage = '';
+  String _displayedText = '';
+  String _audioUrl = ''; // 오디오 URL
+
 
   @override
   void initState() {
     super.initState();
-
+    _sendToServer();  // 서버에 데이터 전송
     // AnimationController 초기화
     _controller = AnimationController(
       duration: const Duration(seconds: 2), // 애니메이션 반복 시간
@@ -36,6 +49,149 @@ class _DragBalloonPageState extends State<DragBalloonPage>
     _controller.dispose(); // AnimationController 해제
     super.dispose();
   }
+
+  Future<void> _sendToServer() async {
+    await dotenv.load();
+    final apiUrl = dotenv.env['API_URL']!;  // Get Comfort message URL
+
+    print(apiUrl);
+    if (apiUrl == null || apiUrl.isEmpty) {
+      setState(() {
+        _comfortMessage = 'API URL이 설정되지 않았습니다.';
+      });
+      return;
+    }
+
+    try {
+      final response = await http.post(
+        Uri.parse(apiUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'content': widget.content}),
+      );
+      print('응답 상태 코드: ${response.statusCode}');
+      print('응답 본문: ${response.body}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        final responseData = jsonDecode(utf8.decode(response.bodyBytes));
+        final comfortMessage = responseData['comfort_message'];
+        print('응답 데이터: $responseData');
+
+        if (comfortMessage.isNotEmpty) {
+          setState(() {
+            _comfortMessage = comfortMessage;
+          });
+          await _generateTTS(comfortMessage); // TTS 생성 및 Polling 시작
+        }
+      } else {
+        setState(() {
+          _comfortMessage = "전송 실패: ${response.statusCode}";
+          print(_comfortMessage);
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _comfortMessage = "서버 전송 중 오류 발생: $e";
+        print(_comfortMessage);
+      });
+    }
+  }
+
+  // TTS 생성 및 Polling
+  Future<void> _generateTTS(String text) async {
+    try {
+      final url = "https://typecast.ai/api/speak";
+      final payload = jsonEncode({
+        "actor_id": "61532c5aed9bfa8b54d5dff6",
+        "text": text,
+        "lang": "auto",
+        "xapi_hd": true,
+        "model_version": "latest",
+        "xapi_audio_format": "wav"
+      });
+
+
+      final apiKey = dotenv.env['TYPECAST_API_KEY']!;
+      print('API Key: ${dotenv.env['TYPECAST_API_KEY']}');
+      final headers = {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $apiKey',
+      };
+
+      print('TTS 요청 URL: $url');
+      print('TTS 요청 Payload: $payload');
+
+      final response = await http.post(Uri.parse(url), headers: headers, body: payload);
+      print('TTS 응답 상태 코드: ${response.statusCode}');
+      print('TTS 응답 본문: ${response.body}');
+      if (response.statusCode == 200) {
+        final responseBody = jsonDecode(response.body);
+        final speakV2Url = responseBody['result']['speak_v2_url'];
+
+        if (speakV2Url != null) {
+          await _pollForAudioUrl(speakV2Url, text);
+        } else {
+          setState(() {
+            _comfortMessage = "TTS 생성 실패: speak_v2_url이 반환되지 않았습니다.";
+            print(_comfortMessage);
+          });
+        }
+      } else {
+        setState(() {
+          _comfortMessage = "TTS 요청 실패: ${response.statusCode}";
+          print(_comfortMessage);
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _comfortMessage = "TTS 생성 중 오류 발생: $e";
+        print(_comfortMessage);
+      });
+    }
+  }
+
+// Polling으로 Audio URL 획득
+  Future<void> _pollForAudioUrl(String speakV2Url, String comfortMessage) async {
+    const pollingInterval = Duration(seconds: 1);
+
+    while (true) {
+      try {
+        //print('Polling 중: $speakV2Url');
+        final response = await http.get(Uri.parse(speakV2Url), headers: {
+          'Authorization': 'Bearer ${dotenv.env['TYPECAST_API_KEY']}',
+        });
+
+        //print('Polling 응답 상태 코드: ${response.statusCode}');
+        //print('Polling 응답 본문: ${response.body}');
+
+        final responseJson = jsonDecode(response.body);
+        if (responseJson['result']['status'] == 'done') {
+          final audioUrl = responseJson['result']['audio_download_url'];
+          if (audioUrl != null) {
+            setState(() {
+              _audioUrl = audioUrl; // 오디오 URL 저장
+              _comfortMessage = comfortMessage; // 조언 메시지 저장
+            });
+            // await _playAudio(audioUrl, comfortMessage);
+            // break;
+          }
+        } else if (responseJson['result']['status'] == 'error') {
+          setState(() {
+            _comfortMessage = "오디오 생성 중 오류 발생.";
+            print(_comfortMessage);
+          });
+          break;
+        }
+      } catch (e) {
+        setState(() {
+          _comfortMessage = "Polling 중 오류 발생: $e";
+          print(_comfortMessage);
+        });
+        break;
+      }
+      await Future.delayed(pollingInterval);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
 
@@ -85,7 +241,10 @@ class _DragBalloonPageState extends State<DragBalloonPage>
                   Future.delayed(const Duration(milliseconds: 300), () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => WorryingPage()),
+                      MaterialPageRoute(builder: (context) => WorryingPage(
+                        audioUrl: _audioUrl,
+                        comfortMessage: _comfortMessage,
+                      ),),
                     );
                   });
                 }
