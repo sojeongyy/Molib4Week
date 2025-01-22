@@ -3,10 +3,14 @@ import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/widgets/BalloonDisplay.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
-
 import '../core/DollProvider.dart';
 import '../core/colors.dart';
 import 'DragBalloonPage.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'ResponsePage.dart';
 
 
 class MyWorryPage extends StatefulWidget {
@@ -24,6 +28,12 @@ class _MyWorryPageState extends State<MyWorryPage>
   late Animation<double> _animation;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
 
+  // stt
+  late stt.SpeechToText _speech;
+  bool _isListening = false;
+  String _recognizedText = '';
+
+
   @override
   void initState() {
     super.initState();
@@ -38,13 +48,54 @@ class _MyWorryPageState extends State<MyWorryPage>
     _animation = Tween<double>(begin: -0.05, end: 0.05).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+
+    // stt 초기화 및 녹음 시작
+    _speech = stt.SpeechToText();
+    _startListening();
   }
 
   @override
   void dispose() {
+    _stopListening(); // 녹음 중지
     _controller.dispose(); // AnimationController 해제
     super.dispose();
   }
+  // stt function
+  Future<void> _startListening() async {
+    bool available = await _speech.initialize(
+      onError: (error) => print("STT Error: $error"),
+      onStatus: (status) => print("STT Status: $status"),
+    );
+    if (available) {
+      setState(() {
+        _isListening = true;
+        _recognizedText = "";
+      });
+      _speech.listen(
+        onResult: (val) {
+          setState(() {
+            _recognizedText = val.recognizedWords;
+          });
+        },
+        localeId: 'ko_KR',
+        listenMode: stt.ListenMode.dictation,
+        partialResults: true,
+      );
+    } else {
+      print("STT 초기화 실패");
+    }
+  }
+
+  void _stopListening() async {
+    if (_isListening) {
+      await _speech.stop();
+      setState(() {
+        _isListening = false;
+      });
+    }
+  }
+
+  // ui
   @override
   Widget build(BuildContext context) {
     return Navigator(
@@ -111,8 +162,7 @@ class _MyWorryPageState extends State<MyWorryPage>
                 width: 305,
                 height: 150,
                 child: BalloonCard(
-                  content: '사실 요즘 일이 잘 안 풀리는 것 같아서 좀 답답해. \n'
-                            '어떻게 해야 할지 모르겠어.'
+                  content: _recognizedText.isNotEmpty ? _recognizedText : '...',
                 ),
               ),
             ),
@@ -133,10 +183,23 @@ class _MyWorryPageState extends State<MyWorryPage>
                 height: 50,
                 child: WorryButton(
                   text: '걱정 전달하기',
+
                   onPressed: () {
                     // Navigator를 사용해 MyWorryPage로 이동
                     _navigatorKey.currentState!.push(
                       MaterialPageRoute(builder: (context) => DragBalloonPage()),
+
+//                   onPressed: () async {
+//                     print('걱정 전달하기 버튼 클릭됨');
+//                     print(_recognizedText);
+//                     _stopListening();
+//                     // ResponsePage로 recognizedText를 전달
+//                     Navigator.push(
+//                       context,
+//                       MaterialPageRoute(
+//                         builder: (context) => ResponsePage(content: _recognizedText),
+//                       ),
+
                     );
                   },
                 ),

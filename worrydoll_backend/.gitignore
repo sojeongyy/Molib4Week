@@ -1,0 +1,38 @@
+# Python 캐시 파일
+__pycache__/
+*.pyc
+*.pyo
+
+# 환경 변수 파일
+.env
+
+# 가상환경 파일
+.venv/
+
+# IDE/편집기 설정
+.vscode/
+.idea/
+
+# Docker 관련 파일 및 폴더
+*.log
+*.pid
+data/
+volumes/
+
+# 운영체제 관련 파일
+Thumbs.db
+.DS_Store
+
+# FastAPI 테스트 데이터
+*.sqlite3
+*.db
+
+# 빌드 및 배포 캐시
+.mypy_cache/
+.pytest_cache/
+
+# 기타
+*.swp
+
+# 테스트 파일
+confirm_request.py
