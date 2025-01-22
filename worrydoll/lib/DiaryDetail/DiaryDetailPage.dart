@@ -1,10 +1,14 @@
+import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../core/DollProvider.dart';
 import '../core/colors.dart';
 
 class DiaryDetailPage extends StatefulWidget {
+  final int worryId;
   final DateTime dateTime;
   final String content; // 본문 내용
   final String comfortMessage; // 걱정인형의 한마디
@@ -13,6 +17,7 @@ class DiaryDetailPage extends StatefulWidget {
 
   const DiaryDetailPage({
     Key? key,
+    required this.worryId,
     required this.dateTime,
     required this.content,
     required this.comfortMessage,
@@ -49,6 +54,38 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
     List<String> lines = _splitContent(currentContent, 27);
     for (int i = 0; i < controllers.length; i++) {
       controllers[i].text = lines.length > i ? lines[i] : '';
+    }
+  }
+
+  Future<void> updateWorryContent(int worryId, String newContent) async {
+    await dotenv.load();
+    final String baseUrl = dotenv.env['API_URL']!;
+    final url = Uri.parse('$baseUrl$worryId');
+
+
+    try {
+      final response = await http.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"content": newContent}),
+      );
+      print('update worry url: $url');
+      print(newContent);
+
+      if (response.statusCode == 200) {
+        // 서버가 업데이트 성공 응답을 보낸 경우
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('내용이 성공적으로 저장되었습니다.')),
+        );
+      } else {
+        // 서버 오류
+        throw Exception('Failed to update content: ${response.statusCode}');
+      }
+    } catch (e) {
+      // 네트워크 오류 또는 기타 예외 처리
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('오류가 발생했습니다: $e')),
+      );
     }
   }
 
@@ -154,7 +191,7 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (isEditing) {
                         // 편집 완료 시 컨텐츠 저장
                         setState(() {
@@ -162,6 +199,7 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
                               .map((controller) => controller.text)
                               .join('');
                         });
+                        await updateWorryContent(widget.worryId, currentContent);
                       }
                       setState(() {
                         isEditing = !isEditing;

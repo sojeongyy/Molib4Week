@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 import '../DiaryList/DiaryListPage.dart';
 import '../core/colors.dart';
@@ -16,28 +18,44 @@ class _DiaryCalendarPageState extends State<DiaryCalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
   Set<DateTime> _diaryDates = {}; // 일기가 있는 날짜 저장
+  bool _isLoading = true; // 로딩 상태
+  String? _errorMessage; // 에러 메시지
 
   @override
   void initState() {
     super.initState();
-    _loadDiaryDates(); // JSON 파일에서 날짜 로드
+    _loadDiaryDates(); // API에서 날짜 로드
   }
 
   Future<void> _loadDiaryDates() async {
-    // JSON 파일 로드
-    final String jsonString =
-    await rootBundle.loadString('assets/json/diary_dummy_data.json');
-    final List<dynamic> jsonData = json.decode(jsonString);
+    await dotenv.load();
+    final url = dotenv.env['API_URL']!;
 
-    // 날짜 추출 및 중복 제거
-    final dates = jsonData.map((entry) {
-      final date = DateTime.parse(entry['date_created']);
-      return DateTime(date.year, date.month, date.day); // 시간 제거
-    }).toSet();
+    try {
+      final response = await http.get(Uri.parse(url));
 
-    setState(() {
-      _diaryDates = dates;
-    });
+      if (response.statusCode == 200) {
+        final List<dynamic> jsonData = json.decode(response.body);
+
+        final dates = jsonData.map((entry) {
+          final dateUtc = DateTime.parse(entry['date_created']);
+          final dateKst = dateUtc.add(Duration(hours: 9)); // KST 변환
+          return DateTime(dateKst.year, dateKst.month, dateKst.day); // 시간 제거
+        }).toSet();
+
+        setState(() {
+          _diaryDates = dates;
+          _isLoading = false; // 로딩 종료
+        });
+      } else {
+        throw Exception('Failed to load data: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        _errorMessage = '데이터를 불러오지 못했습니다. 네트워크 상태를 확인해주세요.';
+        _isLoading = false; // 로딩 종료
+      });
+    }
   }
 
   @override
