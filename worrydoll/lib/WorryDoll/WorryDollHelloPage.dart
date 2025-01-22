@@ -118,11 +118,11 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
           ),
         ),
 
-        BalloonDisplay(
-          balloonSize: 150, // 풍선 크기 조정
-          // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
-          // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
-        ),
+        // BalloonDisplay(
+        //   balloonSize: 150, // 풍선 크기 조정
+        //   // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
+        //   // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
+        // ),
 
         // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
         Positioned(

@@ -185,12 +185,12 @@ class _WorryingPageState extends State<WorryingPage>
             ),
           ),
 
-          // 풍선 이미지
-          BalloonDisplay(
-            balloonSize: 150, // 풍선 크기 조정
-            // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
-            // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
-          ),
+          // // 풍선 이미지
+          // BalloonDisplay(
+          //   balloonSize: 150, // 풍선 크기 조정
+          //   // redBalloonOffset: Offset(50, 100), // 빨간 풍선 위치
+          //   // yellowBalloonOffset: Offset(50, 200), // 노란 풍선 위치
+          // ),
 
           // 말풍선
           Positioned(
