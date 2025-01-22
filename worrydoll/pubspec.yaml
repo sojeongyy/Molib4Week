@@ -30,7 +30,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  http: ^0.13.5
+  http: ^1.2.2
   speech_to_text: ^7.0.0
   flutter_dotenv: ^5.2.0
 
@@ -87,7 +87,7 @@ flutter:
 
     - assets/json/diary_dummy_data.json
 
-   - .env
+    - .env
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
