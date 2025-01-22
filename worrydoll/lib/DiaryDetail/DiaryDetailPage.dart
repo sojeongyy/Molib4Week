@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../core/DollProvider.dart';
@@ -8,6 +9,7 @@ class DiaryDetailPage extends StatefulWidget {
   final String content; // 본문 내용
   final String comfortMessage; // 걱정인형의 한마디
   final String title;
+
 
   const DiaryDetailPage({
     Key? key,
@@ -27,6 +29,7 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
   final List<TextEditingController> controllers =
   List.generate(4, (_) => TextEditingController());
   final List<FocusNode> focusNodes = List.generate(4, (_) => FocusNode());
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   List<String> _splitContent(String content, int maxLength) {
     // 본문을 maxLength 기준으로 나누기
@@ -46,6 +49,15 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
     List<String> lines = _splitContent(currentContent, 27);
     for (int i = 0; i < controllers.length; i++) {
       controllers[i].text = lines.length > i ? lines[i] : '';
+    }
+  }
+
+  void _playComfortMessage() async {
+    try {
+      await _audioPlayer.play(AssetSource('audio/pop_sound.mp3')); // 변경해야됨
+      // 음원 URL은 실제로 사용 가능한 URL로 교체하세요.
+    } catch (e) {
+      print('Audio playback error: $e');
     }
   }
 
@@ -170,12 +182,23 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
               ),
               const SizedBox(height: 20),
               // 걱정인형의 한마디
-              const Text(
-                '걱정인형의 한마디',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    '걱정인형의 한마디',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.volume_up),
+                    onPressed: () {
+                      _playComfortMessage();
+                    },
+                  ),
+                ],
               ),
               const SizedBox(height: 10),
               Container(
