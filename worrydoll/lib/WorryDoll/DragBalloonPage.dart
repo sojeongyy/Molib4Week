@@ -134,7 +134,7 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
     '곰돌': 'TYPECAST_API_KEY1', // 덕구
     '길인': 'TYPECAST_API_KEY1', // 팡팡
     '어흥': 'TYPECAST_API_KEY1',  // 틸
-    '개굴': 'TYPECAST_API_KEY1',  // 아봉
+    '개굴': 'TYPECAST_API_KEY3',  // 아봉
     '늘봉': 'TYPECAST_API_KEY2',  // 영길
   };
   // TTS 생성 및 Polling
