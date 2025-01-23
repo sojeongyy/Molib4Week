@@ -117,12 +117,29 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
     }
   }
 
+  final Map<String, String> actorIdMapping = {
+    '토순': '660637108db3e2c06ff6ffa7', // 예: '토끼 인형'에 해당하는 ID
+    '곰돌': '618203826672d21ebf37748e', // 덕구
+    '길인': '61532cab9119555d352f5c69', // 팡팡
+    '어흥': '5ebea13564afaf00087fc2e7',  // 틸
+    '개굴': '61532c5aed9bfa8b54d5dff6',  // 아봉
+    '늘봉': '5ebea13564afaf00087fc2e7',  // 영길
+  };
+
   // TTS 생성 및 Polling
   Future<void> _generateTTS(String text) async {
     try {
+
+      final selectedDollName =
+          Provider.of<DollProvider>(context, listen: false).selectedDollName ??
+              "기본 인형";
+
       final url = "https://typecast.ai/api/speak";
+      // actor_id 설정
+      final actorId = actorIdMapping[selectedDollName] ??
+          '61532c5aed9bfa8b54d5dff6'; // 기본 actor_id 설정
       final payload = jsonEncode({
-        "actor_id": "61532c5aed9bfa8b54d5dff6",
+        "actor_id": actorId,
         "text": text,
         "lang": "auto",
         "xapi_hd": true,
