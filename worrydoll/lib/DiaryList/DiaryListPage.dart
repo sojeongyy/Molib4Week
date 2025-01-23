@@ -59,6 +59,10 @@ class _DiaryListPageState extends State<DiaryListPage> {
     }
   }
 
+  DateTime _convertToKST(DateTime utcTime) {
+    return utcTime.add(const Duration(hours: 9)); // UTC에 +9시간을 더해 KST로 변환
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -69,7 +73,7 @@ class _DiaryListPageState extends State<DiaryListPage> {
             const SizedBox(height: 50.0),
             Center(
               child: Text(
-                '${widget.selectedDate.year}년 ${widget.selectedDate.month}월 ${widget.selectedDate.day}일 걱정일기',
+                '${_convertToKST(widget.selectedDate).year}년 ${_convertToKST(widget.selectedDate).month}월 ${_convertToKST(widget.selectedDate).day}일 걱정일기',
                 style: const TextStyle(
                   fontSize: 36.0,
                 ),
@@ -86,6 +90,7 @@ class _DiaryListPageState extends State<DiaryListPage> {
             else
               ...diaryEntries.map((entry) {
                 final entryTime = DateTime.parse(entry['date_created']);
+                final entryKST = _convertToKST(entryTime);
                 return GestureDetector(
                   onTap: () {
                     // 선택한 일기의 상세 페이지로 이동
@@ -94,7 +99,7 @@ class _DiaryListPageState extends State<DiaryListPage> {
                       MaterialPageRoute(
                         builder: (context) => DiaryDetailPage(
                           worryId: entry['id'],
-                          dateTime: entryTime,
+                          dateTime: entryKST,
                           content: entry['content'],
                           comfortMessage: entry['comfort_message'] ?? '',
                           title: entry['title'],
@@ -104,7 +109,7 @@ class _DiaryListPageState extends State<DiaryListPage> {
                   },
                   child: DiaryListComponent(
                     time:
-                    '${entryTime.hour > 12 ? "오후" : "오전"} ${entryTime.hour % 12}:${entryTime.minute.toString().padLeft(2, '0')}',
+                    '${entryKST.hour > 12 ? "오후" : "오전"} ${entryKST.hour % 12}:${entryKST.minute.toString().padLeft(2, '0')}',
                     title: entry['title'],
                   ),
                 );

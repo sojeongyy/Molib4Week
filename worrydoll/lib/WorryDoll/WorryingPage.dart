@@ -255,7 +255,22 @@ class _WorryingPageState extends State<WorryingPage>
       ),
     );
   }
-
+  final Map<String, String> MapFirstMessgaes = {
+    '토순': 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-7cbf478964-8s5nx/bd467659-bba5-4e5f-9815-f93d8816df32.wav?Expires=1737631292&Signature=BTxR-YnE43qJBcak6v3~unw4IVvkFzdaGSCiAnB4SiFX2FcEdjooCa2AAg~ff~5bJCt-Xj06FQnNgLbmvDhG0LxRHfLkBOO9Xk86yOd~u6sQV2dC4exnFFxbHbCMqsjjBmZQPs78-Ch~Z8aIwpuB2pkd9Fc2r1i1sluAYPGDtITUvjLNRQZxiHdaFzQSyoP-ypmNC7QCn65mU65~mID124UeLgDe6o6OSmzTg9dhwMQy5hSb4NqjthLHur95Hyesj9B0Z33M3XQxEo1M45wWicxzJB3hufqCyaXHyKt1Xcl0zO-ssZsLYGcYzY~t0pu-rU8tXOd6yO6WqABKN1R9FA__&Key-Pair-Id=K11PO7SMLJYOIE',
+    '곰돌': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-7f5b66db69-zlsqs/53bdfcce-5f2d-4852-9c61-470f3d76f84c.wav?Expires=1737700820&Signature=e~zHQAkIdz9Ta-ZuWCv5rQJK7aBJlOJr2~WH2oYP2LTj~RiOzT~rh1CAk-jOQPYz606YRZE1oaYuXMd07O5h4FiJ5IroZ8mIk5r5ijBqqtBEw9MpzGgt0HvpGxInANJnNCByK-cL5-~BAb6Jf0IAjIiwwKDiIyr3MciFPrxezebu6j87HMrOhUbqTq7OkOIsO2yh2hDlqjgzzAsGmNymklqOVZX~YWjl2UxgutGCQfHPRoQDbNAAydkAFvlz~pngen6jFOFHOmdSYEK0SnUsZFnsEFapV5BP177AkychktXtCRam2zEt0WynK9DFUV8rIybK-wMhQsjqNTnkACwNNg__&Key-Pair-Id=K11PO7SMLJYOIE',
+    '길인': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-7f5b66db69-vsd6n/3d14d8b8-214d-4696-9ce6-1857b74516c1.wav?Expires=1737701160&Signature=XG7ATZSZuOcavNbOB3msRQfHV13Uwg4FshjMUt0cNaWRHFHiLN2yTnHDk5D-YLZBgHBJiCW68qDlj65i-ZsXnfKFs-7nSeB9SLHU-CukIAdL4oTJ7Nebz--QXPTKJCqxg9gaH88MQKQM1ZW1bWTtXOxy7U0~1Ql40oMx2I5AIEJSs1trRzjm3oWbwDNKSozEHQ1l6APr5saqfmAEe58NmpWPDfzoM8DfvEjRvHRXUwvmtViXPkh6d3zuS2orfI7MnmvGLm30j0vkLD1V2pLzPVdVUE6~AyLcHI8tr~Vg19S5oV-R4dY6Z3nLjKq9n8NjLeq1woBBUiNX-lX8PhShog__&Key-Pair-Id=K11PO7SMLJYOIE',
+    '어흥': '',
+    '개굴': '',
+    '늘봉': '',
+  };
+  final Map<String, String> MapSecondMessages = {
+    '토순': 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-7cbf478964-47wp4/6df2d3bd-34ad-4dd3-be89-11681047fe44.wav?Expires=1737631152&Signature=rSGHdpkHX3KSijrFlbRC-Zqbl7U1w7Q7GEsSaWnTUVyaGJyHvzSetiQt5qXAK9cXRTwds6KwGZISviWxxrbff6fNVHFESrY6tG0hf307p-fLG78mvwe89mFu7kP6gH-m3P4FOSuwH7acBrpHYh7yKC5DuTjoX75ZXtKSxcK7tr9Hn3eq6DNAOBsRnA2REpb6JM7XEwjQ~XbfgFh48EqrGGmNzXNcgHgRltdQAhGIRavAxgBK4qQ4QWOYmBhkKm5S03mBizcRmWl1IX630YlpqidM7qSmL-HYf3mntLmKxQwgMmnx8Jo-ClX6J6ImfTesUSzvlOfxpqNNfJyUh2IMLw__&Key-Pair-Id=K11PO7SMLJYOIE', // 예: '토끼 인형'에 해당하는 ID
+    '곰돌': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-7f5b66db69-cp75q/7cdc3a4b-318a-4a4c-9eae-97ae096a7b8b.wav?Expires=1737700969&Signature=ppQum9vDJeVlmh46AuE~dkbNn6b5XxB5~GSsB4mNAP7oA~CYR8MBRxAZ~K9hnFC7C4k7hGpKlpslL88j52y2gWtqpsvsMVjDpTtCIM-rnWMPGb8-qduTcWoab8iNNDtFfjAXvPTWqyXE~UA7GBzG6YDBj8nKQ6SGxRgtgZYSiJe8y9tkVeFcGNUgXddjuucza6Y1DjKXISmhBM9AqQ9Ep-LbOrjv8YthvqcBx-WTSBXhMfz~f5cy5sckch0QpROdmk8RA5eGP6qjwULcEgnMchyatB71Hs4V3alHBgqtJ5xPsl35KG4MkYLlE3vPEd6nNpw0cq9FfewNjKe~946YKA__&Key-Pair-Id=K11PO7SMLJYOIE', // 덕구
+    '길인': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-7f5b66db69-cp75q/52576707-800d-452e-8c81-577c89a17b7b.wav?Expires=1737701105&Signature=Hp4Na649d8FkMjDkYLkaH6VkwjF-FgG6DN7baxRXHV8IYZJq8RHcxmU0Y18NcK~5MBBeEzAXxm7eH~ykmRhB~HFJMsd0sjaisrhZbrlOggIiz9WPPiOmrB9LfmQKRiW-le5uolsoCCweaUgEPyjSttUezpSfzhAxZh2OX36rudYWAJDD-p3Rxqs~YhnD9yrkpg~IrjL-cFGjVvY3JIrM1I6p-s9RXe3hSigga3QnuTBBTo6u8CAj-oWVDvcVFcGfrDgynSXwLu7WwACNsbQ9s51r0HUx~dX5iyj~oVdrIQTlpHzxThXGuFthvs4F1ZWBaFyMXdRKgCkgtQUojefyow__&Key-Pair-Id=K11PO7SMLJYOIE', // 팡팡
+    '어흥': 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-7cbf478964-hf7kc/317d7fd9-f71a-4365-8234-51747b85368f.wav?Expires=1737630580&Signature=drBA2ARuGR4YPbLkcvMh6xdzsT3IDtCOr5DCj1qqqrqllXmfKQCL8JF55qNEQ42OAkxL~hOv9geMNPLZIviiyuW-ww4l9n0WtMy9lCFhLR15yDEt~-ELI5pyUHF-37FIO3oTu4pghwyK0OEkTFxJWskS1AUb8Jp-Fe6wGLi0KDrM3-X9aEVoiN2bF5W5NqIYEAQM-S9xf4BkKS4gKJLuAsS1OlILMWfX4sb-9OSPZDt2zMABTiZcLsf61JK0MqJB6cpGZ34MePYpa438Xfk1qZIcSSOV3G-P-Ts-m3y2GjzftNEw-GRQZ9-3f9sCDNQbjId9XS6TpOUMtD0K1CVohA__&Key-Pair-Id=K11PO7SMLJYOIE',  // 틸
+    '개굴': '61532c5aed9bfa8b54d5dff6',  // 아봉
+    '늘봉': '5ebea13564afaf00087fc2e7',  // 영길
+  };
   void _switchToSecondMessage() {
     print('Switching to the second message');
     print('isSecondMessagePlaying: $_isSecondMessagePlaying');
@@ -266,7 +281,13 @@ class _WorryingPageState extends State<WorryingPage>
       //_isSecondMessagePlaying = true; // 재생 상태 업데이트
     });
     //_startTypingEffect(secondMessage); // 글자
-    String url = 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-6f9979d5f6-xkg4p/088fe74b-3851-4084-a2a4-015ce42a61b8.wav?Expires=1737614904&Signature=sa0b09jNp30hr7TNiy7LazCmJOGx30854jMznzwKtkJg4SQU0~FtkGOFB1OJgXtK781jbBybkLqVRXrZmeGrXSY6AZTJhnc84o1sCrHyQ7j38ZCbheejMd1EHFnBaCFE6s3lRMmo1Uc1VXDzgl6XMN4gQ9iKfLDmqRKPpvaWWj4KK5BUqMV6hrPFdDr6SDqHY9RZhbweFjfD-J~Y1iLd4Ya00Zjmtt-UOBz7ZxztDXJd-3qbbIvfeFO5b8bYFo5MqIcxl~nwrelhi4aC9mBbqLhInbeY06jj9SUXbBZUlXl7EWsZn0PQjvW0gsC-3gg4Jo~lF9TjgzwMkcVal~uBIQ__&Key-Pair-Id=K11PO7SMLJYOIE';
+    final selectedDollName =
+        Provider.of<DollProvider>(context, listen: false).selectedDollName ??
+            "기본 인형";
+    print(selectedDollName);
+
+    String url = MapSecondMessages[selectedDollName] ??
+        'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-6f9979d5f6-xkg4p/088fe74b-3851-4084-a2a4-015ce42a61b8.wav?Expires=1737614904&Signature=sa0b09jNp30hr7TNiy7LazCmJOGx30854jMznzwKtkJg4SQU0~FtkGOFB1OJgXtK781jbBybkLqVRXrZmeGrXSY6AZTJhnc84o1sCrHyQ7j38ZCbheejMd1EHFnBaCFE6s3lRMmo1Uc1VXDzgl6XMN4gQ9iKfLDmqRKPpvaWWj4KK5BUqMV6hrPFdDr6SDqHY9RZhbweFjfD-J~Y1iLd4Ya00Zjmtt-UOBz7ZxztDXJd-3qbbIvfeFO5b8bYFo5MqIcxl~nwrelhi4aC9mBbqLhInbeY06jj9SUXbBZUlXl7EWsZn0PQjvW0gsC-3gg4Jo~lF9TjgzwMkcVal~uBIQ__&Key-Pair-Id=K11PO7SMLJYOIE'; // 기본 actor_id 설정
     _playAudio(url, secondMessage).then((_) {
       // 재생이 완료되면 상태 초기화
       setState(() {
