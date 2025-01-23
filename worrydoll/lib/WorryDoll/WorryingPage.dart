@@ -17,8 +17,9 @@ import 'DragBalloonPage.dart';
 class WorryingPage extends StatefulWidget {
   final String audioUrl;
   final String comfortMessage;
+  final String balloonColor;
 
-  WorryingPage({required this.audioUrl, required this.comfortMessage});
+  WorryingPage({required this.audioUrl, required this.comfortMessage, required this.balloonColor});
 
   @override
   _WorryingPageState createState() => _WorryingPageState();
@@ -149,6 +150,9 @@ class _WorryingPageState extends State<WorryingPage>
             .selectedDollImagePath ??
             'assets/images/dolls/default.png'; // 선택되지 않았을 경우 기본 이미지
 
+    // 풍선 이미지 경로 결정
+    final balloonImagePath = 'assets/images/balloons/${widget.balloonColor}_balloon.png';
+
     return Scaffold(
       body: Stack(
         children: [
@@ -204,6 +208,16 @@ class _WorryingPageState extends State<WorryingPage>
             ),
           ),
 
+          // 풍선 이미지 추가
+          Positioned(
+            top: 130, // 풍선 Y 위치
+            right: 50, // 풍선 X 위치 (화면 중앙)
+            child: Image.asset(
+              balloonImagePath,
+              width: 90,
+              fit: BoxFit.contain,
+            ),
+          ),
 
           // 걱정 털어놓기 버튼(절대 위치, 고정 크기)
           if (!_showFirstMessage)
