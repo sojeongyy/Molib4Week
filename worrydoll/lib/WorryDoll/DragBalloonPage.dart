@@ -71,6 +71,7 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
     print('Selected Balloon: $_balloonColor ($_balloonType)');
   }
 
+  int? _worryId;
   Future<void> _sendToServer() async {
     await dotenv.load();
     final apiUrl = dotenv.env['API_URL']!;  // Get Comfort message URL
@@ -95,6 +96,8 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
       if (response.statusCode == 200 || response.statusCode == 201) {
         final responseData = jsonDecode(utf8.decode(response.bodyBytes));
         final comfortMessage = responseData['comfort_message'];
+        final worryId = responseData['id'];
+        _worryId = worryId;
         print('응답 데이터: $responseData');
 
         if (comfortMessage.isNotEmpty) {
@@ -126,6 +129,14 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
     '늘봉': '5ebea13564afaf00087fc2e7',  // 영길
   };
 
+  final Map<String, String> apiTockenMapping = {
+    '토순': 'TYPECAST_API_KEY2', // 예: '토끼 인형'에 해당하는 ID
+    '곰돌': 'TYPECAST_API_KEY1', // 덕구
+    '길인': 'TYPECAST_API_KEY1', // 팡팡
+    '어흥': 'TYPECAST_API_KEY1',  // 틸
+    '개굴': 'TYPECAST_API_KEY1',  // 아봉
+    '늘봉': 'TYPECAST_API_KEY1',  // 영길
+  };
   // TTS 생성 및 Polling
   Future<void> _generateTTS(String text) async {
     try {
@@ -147,9 +158,10 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
         "xapi_audio_format": "wav"
       });
 
-
-      final apiKey = dotenv.env['TYPECAST_API_KEY']!;
-      print('API Key: ${dotenv.env['TYPECAST_API_KEY']}');
+      final account = apiTockenMapping[selectedDollName] ??
+          'TYPECAST_API_KEY1';
+      final apiKey = dotenv.env[account]!;
+      print('API Key: $account: ${dotenv.env[account]}');
       final headers = {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer $apiKey',
@@ -190,16 +202,24 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
 // Polling으로 Audio URL 획득
   Future<void> _pollForAudioUrl(String speakV2Url, String comfortMessage) async {
     const pollingInterval = Duration(seconds: 1);
+    final selectedDollName =
+        Provider.of<DollProvider>(context, listen: false).selectedDollName ??
+            "기본 인형";
+    final account = apiTockenMapping[selectedDollName] ??
+        'TYPECAST_API_KEY1';
+    final apiKey = dotenv.env[account]!;
+    print('API Key: $account: ${dotenv.env[account]}');
 
     while (true) {
       try {
-        //print('Polling 중: $speakV2Url');
+        print('Polling 중: $speakV2Url');
+
         final response = await http.get(Uri.parse(speakV2Url), headers: {
-          'Authorization': 'Bearer ${dotenv.env['TYPECAST_API_KEY']}',
+          'Authorization': 'Bearer $apiKey',
         });
 
-        //print('Polling 응답 상태 코드: ${response.statusCode}');
-        //print('Polling 응답 본문: ${response.body}');
+        print('Polling 응답 상태 코드: ${response.statusCode}');
+        print('Polling 응답 본문: ${response.body}');
 
         final responseJson = jsonDecode(response.body);
         if (responseJson['result']['status'] == 'done') {
@@ -209,8 +229,13 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
               _audioUrl = audioUrl; // 오디오 URL 저장
               _comfortMessage = comfortMessage; // 조언 메시지 저장
             });
-            // await _playAudio(audioUrl, comfortMessage);
-            // break;
+
+            await _updateAudioUrl(audioUrl);
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('위로 메세지가 도착했습니다!')),
+            );
+            break; // Polling 종료
           }
         } else if (responseJson['result']['status'] == 'error') {
           setState(() {
@@ -229,6 +254,47 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
       await Future.delayed(pollingInterval);
     }
   }
+
+  Future<void> _updateAudioUrl(String audioUrl) async {
+    await dotenv.load();
+    final String baseUrl = dotenv.env['API_URL']!;
+
+    // worry_id가 없는 경우 예외 처리
+    if (_worryId == null) {
+      print('Worry ID가 설정되지 않았습니다. 업데이트 불가.');
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Worry ID가 설정되지 않아 Audio URL 업데이트 실패')),
+      );
+      return;
+    }
+
+    final String updateUrl = '$baseUrl$_worryId'; // worry ID 포함 URL 생성
+
+    try {
+      final response = await http.patch(
+        Uri.parse(updateUrl),
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'audio_url': audioUrl}),
+      );
+
+      if (response.statusCode == 200) {
+        // 성공적으로 업데이트된 경우
+        print('Audio URL 업데이트 성공: $audioUrl');
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('위로 메세지가 도착했습니다!')),
+        );
+      } else {
+        throw Exception('Audio URL 업데이트 실패: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Audio URL 업데이트 중 오류 발생: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Audio URL 업데이트 중 오류 발생: $e')),
+      );
+    }
+  }
+
+
 
   @override
   Widget build(BuildContext context) {

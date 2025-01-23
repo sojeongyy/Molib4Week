@@ -13,6 +13,7 @@ class DiaryDetailPage extends StatefulWidget {
   final String content; // 본문 내용
   final String comfortMessage; // 걱정인형의 한마디
   final String title;
+  final String audioUrl;
 
 
   const DiaryDetailPage({
@@ -22,6 +23,7 @@ class DiaryDetailPage extends StatefulWidget {
     required this.content,
     required this.comfortMessage,
     required this.title,
+    required this.audioUrl,
   }) : super(key: key);
 
   @override
@@ -91,7 +93,7 @@ class _DiaryDetailPageState extends State<DiaryDetailPage> {
 
   void _playComfortMessage() async {
     try {
-      await _audioPlayer.play(AssetSource('audio/pop_sound.mp3')); // 변경해야됨
+      await _audioPlayer.play(UrlSource(widget.audioUrl)); // 변경해야됨
       // 음원 URL은 실제로 사용 가능한 URL로 교체하세요.
     } catch (e) {
       print('Audio playback error: $e');

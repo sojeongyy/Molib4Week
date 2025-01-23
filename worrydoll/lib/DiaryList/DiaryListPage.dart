@@ -103,6 +103,7 @@ class _DiaryListPageState extends State<DiaryListPage> {
                           content: entry['content'],
                           comfortMessage: entry['comfort_message'] ?? '',
                           title: entry['title'],
+                          audioUrl: entry['audio_url'] ?? '',
                         ),
                       ),
                     );

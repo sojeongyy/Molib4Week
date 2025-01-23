@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:worrydoll/WorryDoll/widgets/BalloonDisplay.dart';
 import 'package:worrydoll/WorryDoll/widgets/balloon_card.dart';
 import 'package:worrydoll/WorryDoll/widgets/worry_button.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 import '../core/DollProvider.dart';
 import 'MyWorryPage.dart';
@@ -17,10 +18,12 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
   late AnimationController _controller;
   late Animation<double> _animation;
   final GlobalKey<NavigatorState> _navigatorKey = GlobalKey<NavigatorState>();
+  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
     super.initState();
+    _playWelcomeMessage();
 
     // AnimationController 초기화
     _controller = AnimationController(
@@ -36,10 +39,29 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
 
   @override
   void dispose() {
+    _audioPlayer.stop();
     _controller.dispose(); // AnimationController 해제
     super.dispose();
   }
 
+  // 페이지 로드 시 오디오 재생
+  Future<void> _playWelcomeMessage() async {
+    final selectedDollName =
+        Provider.of<DollProvider>(context, listen: false).selectedDollName ??
+            "걱정인형"; // 선택된 인형 이름 가져오기
+    final audioUrl = MapFirstMessgaes[selectedDollName]; // 해당 인형의 URL 가져오기
+
+    if (audioUrl != null && audioUrl.isNotEmpty) {
+      try {
+        await _audioPlayer.play(UrlSource(audioUrl)); // URL 오디오 재생
+        print("재생 중인 URL: $audioUrl");
+      } catch (e) {
+        print("오디오 재생 오류: $e");
+      }
+    } else {
+      print("해당 인형에 URL이 없습니다.");
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Navigator(
@@ -137,6 +159,7 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
               child: WorryButton(
                 text: '걱정 털어놓기',
                 onPressed: () {
+                  _audioPlayer.stop();
                   // Navigator를 사용해 MyWorryPage로 이동
                   _navigatorKey.currentState!.push(
                     MaterialPageRoute(builder: (context) => MyWorryPage()),
@@ -150,3 +173,13 @@ class _WorryDollHelloPageState extends State<WorryDollHelloPage>
     );
   }
 }
+
+final Map<String, String> MapFirstMessgaes = {
+  '토순': 'https://cdn.typecast.ai/data/s/2025/1/22/light-speakcore-worker-7cbf478964-8s5nx/bd467659-bba5-4e5f-9815-f93d8816df32.wav?Expires=1737631292&Signature=BTxR-YnE43qJBcak6v3~unw4IVvkFzdaGSCiAnB4SiFX2FcEdjooCa2AAg~ff~5bJCt-Xj06FQnNgLbmvDhG0LxRHfLkBOO9Xk86yOd~u6sQV2dC4exnFFxbHbCMqsjjBmZQPs78-Ch~Z8aIwpuB2pkd9Fc2r1i1sluAYPGDtITUvjLNRQZxiHdaFzQSyoP-ypmNC7QCn65mU65~mID124UeLgDe6o6OSmzTg9dhwMQy5hSb4NqjthLHur95Hyesj9B0Z33M3XQxEo1M45wWicxzJB3hufqCyaXHyKt1Xcl0zO-ssZsLYGcYzY~t0pu-rU8tXOd6yO6WqABKN1R9FA__&Key-Pair-Id=K11PO7SMLJYOIE',
+  '곰돌': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-7f5b66db69-zlsqs/53bdfcce-5f2d-4852-9c61-470f3d76f84c.wav?Expires=1737700820&Signature=e~zHQAkIdz9Ta-ZuWCv5rQJK7aBJlOJr2~WH2oYP2LTj~RiOzT~rh1CAk-jOQPYz606YRZE1oaYuXMd07O5h4FiJ5IroZ8mIk5r5ijBqqtBEw9MpzGgt0HvpGxInANJnNCByK-cL5-~BAb6Jf0IAjIiwwKDiIyr3MciFPrxezebu6j87HMrOhUbqTq7OkOIsO2yh2hDlqjgzzAsGmNymklqOVZX~YWjl2UxgutGCQfHPRoQDbNAAydkAFvlz~pngen6jFOFHOmdSYEK0SnUsZFnsEFapV5BP177AkychktXtCRam2zEt0WynK9DFUV8rIybK-wMhQsjqNTnkACwNNg__&Key-Pair-Id=K11PO7SMLJYOIE',
+  '길인': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-7f5b66db69-vsd6n/3d14d8b8-214d-4696-9ce6-1857b74516c1.wav?Expires=1737701160&Signature=XG7ATZSZuOcavNbOB3msRQfHV13Uwg4FshjMUt0cNaWRHFHiLN2yTnHDk5D-YLZBgHBJiCW68qDlj65i-ZsXnfKFs-7nSeB9SLHU-CukIAdL4oTJ7Nebz--QXPTKJCqxg9gaH88MQKQM1ZW1bWTtXOxy7U0~1Ql40oMx2I5AIEJSs1trRzjm3oWbwDNKSozEHQ1l6APr5saqfmAEe58NmpWPDfzoM8DfvEjRvHRXUwvmtViXPkh6d3zuS2orfI7MnmvGLm30j0vkLD1V2pLzPVdVUE6~AyLcHI8tr~Vg19S5oV-R4dY6Z3nLjKq9n8NjLeq1woBBUiNX-lX8PhShog__&Key-Pair-Id=K11PO7SMLJYOIE',
+  '어흥': '',
+  '개굴': '',
+  '늘봉': '',
+};
+

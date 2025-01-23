@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:worrydoll/TodayWorry/widgets/BalloonDisplayTab.dart';
@@ -48,24 +50,65 @@ class _TodayWorryPageState extends State<TodayWorryPage>
   }
 
   Future<void> _loadDiaryData() async {
-    // JSON 파일 로드
-    final String jsonString =
-    await rootBundle.loadString('assets/json/diary_dummy_data.json');
-    final List<dynamic> jsonData = json.decode(jsonString);
-
-    // 오늘 날짜 기준으로 필터링
+    await dotenv.load();
+    final String baseUrl = dotenv.env['API_URL']!;
     final today = DateTime.now();
-    setState(() {
-      balloonData = jsonData
-          .where((entry) {
-        final date = DateTime.parse(entry['date_created']);
-        return date.year == today.year &&
-            date.month == today.month &&
-            date.day == today.day;
-      })
-          .cast<Map<String, dynamic>>()
-          .toList();
-    });
+
+    // 오늘 날짜를 KST로 변환 후 문자열로 포맷
+    final String formattedDate =
+        '${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}';
+
+    try {
+      // 수정: API 요청으로 오늘 날짜의 데이터를 가져옴
+      final response = await http.get(Uri.parse('$baseUrl?date=$formattedDate'));
+
+      if (response.statusCode == 200) {
+        final decodedBody = utf8.decode(response.bodyBytes);
+        final List<dynamic> data = json.decode(decodedBody);
+
+        setState(() {
+          balloonData = data
+              .cast<Map<String, dynamic>>()
+              .where((entry) => entry['is_resolved'] == false) // is_resolved=false만 포함
+              .toList();
+        });
+      } else {
+        throw Exception('Failed to load data: ${response.statusCode}');
+      }
+    } catch (e) {
+      setState(() {
+        balloonData = []; // 데이터 비우기
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('데이터를 불러오는 중 오류가 발생했습니다: $e')),
+        );
+      });
+    }
+  }
+
+  Future<void> _resolveWorry(int worryId) async {
+    await dotenv.load(); // .env 파일 로드
+    final String baseUrl = dotenv.env['API_URL']!;
+    final url = Uri.parse('$baseUrl$worryId/resolve');
+    print (url);
+
+    try {
+      final response = await http.patch(
+        url,
+        headers: {"Content-Type": "application/json"},
+      );
+
+      if (response.statusCode == 200) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('풍선이 성공적으로 터졌습니다!')),
+        );
+      } else {
+        throw Exception('Failed to resolve worry: ${response.statusCode}');
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('오류가 발생했습니다: $e')),
+      );
+    }
   }
 
 
@@ -75,10 +118,12 @@ class _TodayWorryPageState extends State<TodayWorryPage>
       context: context,
       //barrierDismissible: true,
       builder: (context) => WorryDialog(
-        time: DateTime.parse(data['date_created']),
+        time: DateTime.parse(data['date_created']).add(Duration(hours: -3)),
         worry: data['content'],
         advice: data['comfort_message'],
-        onPopBalloon: () {
+        onPopBalloon: () async {
+          await _resolveWorry(data['id']);
+
           Navigator.pop(context); // 다이얼로그 닫기 먼저 실행
           setState(() {
             balloonData.removeAt(index); // 풍선 데이터를 삭제
