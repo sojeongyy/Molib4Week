@@ -180,6 +180,6 @@ final Map<String, String> MapFirstMessgaes = {
   '길인': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-7f5b66db69-vsd6n/3d14d8b8-214d-4696-9ce6-1857b74516c1.wav?Expires=1737701160&Signature=XG7ATZSZuOcavNbOB3msRQfHV13Uwg4FshjMUt0cNaWRHFHiLN2yTnHDk5D-YLZBgHBJiCW68qDlj65i-ZsXnfKFs-7nSeB9SLHU-CukIAdL4oTJ7Nebz--QXPTKJCqxg9gaH88MQKQM1ZW1bWTtXOxy7U0~1Ql40oMx2I5AIEJSs1trRzjm3oWbwDNKSozEHQ1l6APr5saqfmAEe58NmpWPDfzoM8DfvEjRvHRXUwvmtViXPkh6d3zuS2orfI7MnmvGLm30j0vkLD1V2pLzPVdVUE6~AyLcHI8tr~Vg19S5oV-R4dY6Z3nLjKq9n8NjLeq1woBBUiNX-lX8PhShog__&Key-Pair-Id=K11PO7SMLJYOIE',
   '어흥': '',
   '개굴': '',
-  '늘봉': '',
+  '늘봉': 'https://cdn.typecast.ai/data/s/2025/1/23/light-speakcore-worker-6c687f585b-hst9k/4e51247b-768d-40d3-b5ab-ac4f48185a14.wav?Expires=1737715319&Signature=WT-09t3UIRry0JL32Ave2D3alwipi9iPHZCHd6VHzyeHBmgOuW54tAtNnp-9p24XMPCfObDYcQTLq4e4Rp6hxrMNi5shoxY9~v8GKeQS-8vBCIwog0Zrvi5Eu3rS506fOkWIIpMUsWyMjaeBkU7EIhd2RSBfLM6bYRzANTlmobPwtLDwQjK0AseHveupXdkKkyTuXOO7BfuEm9Nd-k24y5RJlgjWjxTlWneFqFK7vPXs00YMNTbRt8ebJ~meKYlqTFDCo-sv~UfG70ztdY~cfOs2udsdxKgTcpg7j74XSXxClObucQNFfOsZZ4h4zeu1PJxsB3sGwJrRnsm29BdHJA__&Key-Pair-Id=K11PO7SMLJYOIE',
 };
 

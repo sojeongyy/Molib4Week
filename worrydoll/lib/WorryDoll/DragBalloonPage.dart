@@ -88,7 +88,7 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
       final response = await http.post(
         Uri.parse(apiUrl),
         headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'content': widget.content, 'balloon_color' : _balloonColor}),
+        body: jsonEncode({'content': widget.content, 'balloon_color' : _balloonType}),
       );
       print('응답 상태 코드: ${response.statusCode}');
       print('응답 본문: ${response.body}');
@@ -135,7 +135,7 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
     '길인': 'TYPECAST_API_KEY1', // 팡팡
     '어흥': 'TYPECAST_API_KEY1',  // 틸
     '개굴': 'TYPECAST_API_KEY1',  // 아봉
-    '늘봉': 'TYPECAST_API_KEY1',  // 영길
+    '늘봉': 'TYPECAST_API_KEY2',  // 영길
   };
   // TTS 생성 및 Polling
   Future<void> _generateTTS(String text) async {
