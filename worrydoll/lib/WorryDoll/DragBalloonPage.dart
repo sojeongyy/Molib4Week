@@ -342,6 +342,7 @@ class _DragBalloonPageState extends State<DragBalloonPage> with SingleTickerProv
                       MaterialPageRoute(builder: (context) => WorryingPage(
                         audioUrl: _audioUrl,
                         comfortMessage: _comfortMessage,
+                        balloonColor: _balloonColor,
                       ),),
                     );
                   });
